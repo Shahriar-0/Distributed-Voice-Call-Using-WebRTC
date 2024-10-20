@@ -6,7 +6,7 @@ Window {
     width: 280
     height: 520
     visible: true
-    title: qsTr("CA1")
+    title: qsTr("low_mist")
 
     Item {
         anchors.fill: parent
