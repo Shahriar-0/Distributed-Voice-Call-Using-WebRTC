@@ -21,7 +21,7 @@ Window {
             }
 
             Label {
-                text: "Ip: " + "172.16.142.176"
+                text: "IP: " + "172.16.142.176"
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
             }
@@ -33,11 +33,10 @@ Window {
             }
 
             Label {
-                text: "CallerId: " + textfield.text
+                text: "CallerID: " + textfield.text
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
             }
-
         }
 
         TextField {
@@ -59,7 +58,7 @@ Window {
             text: "Call"
             Material.background: "green"
             Material.foreground: "white"
-            anchors{
+            anchors {
                 bottom: parent.bottom
                 left: parent.left
                 right: parent.right
@@ -68,11 +67,11 @@ Window {
 
             onClicked: {
                 pushed = !pushed
-                if(pushed){
+                if (pushed) {
                     Material.background = "red"
                     text = "End Call"
                 }
-                else{
+                else {
                     Material.background = "green"
                     text = "Call"
                     textfield.clear()
