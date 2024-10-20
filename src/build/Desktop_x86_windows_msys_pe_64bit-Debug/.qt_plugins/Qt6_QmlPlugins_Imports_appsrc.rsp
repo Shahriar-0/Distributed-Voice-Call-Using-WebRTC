@@ -1,0 +1,14 @@
+-rootPath
+D:/DEATH/CN_CA_1/src
+-cmake-output
+-output-file
+D:/DEATH/CN_CA_1/src/build/Desktop_x86_windows_msys_pe_64bit-Debug/.qt_plugins/Qt6_QmlPlugins_Imports_appsrc.cmake
+-importPath
+D:/DEATH/CN_CA_1/src/build/Desktop_x86_windows_msys_pe_64bit-Debug/src
+-importPath
+D:/DEATH/CN_CA_1/src/build/Desktop_x86_windows_msys_pe_64bit-Debug
+-importPath
+C:/Qt/6.5.3/mingw_64/./qml
+-qrcFiles
+D:/DEATH/CN_CA_1/src/build/Desktop_x86_windows_msys_pe_64bit-Debug/.rcc/qmake_src.qrc
+D:/DEATH/CN_CA_1/src/build/Desktop_x86_windows_msys_pe_64bit-Debug/.rcc/appsrc_raw_qml_0.qrc

@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/qt/qml/src">
+    <file alias="qmldir">D:/DEATH/CN_CA_1/src/build/Desktop_x86_windows_msys_pe_64bit-Debug/src/qmldir</file>
+  </qresource>
+</RCC>
+

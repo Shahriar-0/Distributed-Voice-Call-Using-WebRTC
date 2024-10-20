@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/qt/qml/src/">
+    <file alias="Main.qml">D:/DEATH/CN_CA_1/src/Main.qml</file>
+  </qresource>
+</RCC>
+
