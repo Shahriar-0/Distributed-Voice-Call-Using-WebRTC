@@ -35,3 +35,14 @@
 840	3588	7511108107947962	CMakeFiles/appsrc.dir/build/Desktop_x86_windows_msys_pe_64bit-Debug/.rcc/qmlcache/appsrc_qmlcache_loader.cpp.obj	2785bf3bb1cc1dd3
 843	3673	7511108107977495	CMakeFiles/appsrc.dir/build/Desktop_x86_windows_msys_pe_64bit-Debug/.rcc/qmlcache/appsrc_Main_qml.cpp.obj	a9aa9b9ea8a205d0
 3674	3888	7511108136281648	appsrc.exe	1789d253a8e2e90b
+25	69	7511110162769123	src/Main.qml	9cba97b9f38fa55c
+25	69	7511110162769123	D:/DEATH/CN_CA_1/src/build/Desktop_x86_windows_msys_pe_64bit-Debug/src/Main.qml	9cba97b9f38fa55c
+29	133	7511110163371376	.qt_plugins/Qt6_QmlPlugins_Imports_appsrc.cmake	8b54cc2acc6270b9
+29	133	7511110163371376	D:/DEATH/CN_CA_1/src/build/Desktop_x86_windows_msys_pe_64bit-Debug/.qt_plugins/Qt6_QmlPlugins_Imports_appsrc.cmake	8b54cc2acc6270b9
+136	187	7511110163945260	.rcc/qrc_appsrc_raw_qml_0.cpp	c217029c06e94e79
+136	187	7511110163945260	D:/DEATH/CN_CA_1/src/build/Desktop_x86_windows_msys_pe_64bit-Debug/.rcc/qrc_appsrc_raw_qml_0.cpp	c217029c06e94e79
+134	308	7511110165116839	.rcc/qmlcache/appsrc_Main_qml.cpp	2162a38c6ad8ff90
+134	308	7511110165116839	D:/DEATH/CN_CA_1/src/build/Desktop_x86_windows_msys_pe_64bit-Debug/.rcc/qmlcache/appsrc_Main_qml.cpp	2162a38c6ad8ff90
+311	399	7511110165277894	CMakeFiles/appsrc.dir/build/Desktop_x86_windows_msys_pe_64bit-Debug/.rcc/qrc_appsrc_raw_qml_0.cpp.obj	c94d70cb6fafe2f6
+309	2571	7511110165259144	CMakeFiles/appsrc.dir/build/Desktop_x86_windows_msys_pe_64bit-Debug/.rcc/qmlcache/appsrc_Main_qml.cpp.obj	a9aa9b9ea8a205d0
+2571	2757	7511110187869216	appsrc.exe	1789d253a8e2e90b
