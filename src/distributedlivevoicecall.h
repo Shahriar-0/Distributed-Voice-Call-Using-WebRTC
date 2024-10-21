@@ -1,8 +1,13 @@
+// File: distributedlivevoicecall.h
 #ifndef DISTRIBUTEDLIVEVOICECALL_H
 #define DISTRIBUTEDLIVEVOICECALL_H
 
 #include <QDebug>
 #include <QObject>
+#include <QAudioSource>
+#include <QAudioSink>
+#include <QBuffer>
+#include <QTimer>
 
 class DistributedLiveVoiceCall : public QObject {
     Q_OBJECT
@@ -23,6 +28,17 @@ signals:
 
 private:
     QString m_callerID;
+
+    // Audio members
+    QAudioSource* audioSource;
+    QAudioSink* audioSink;
+    QBuffer audioBuffer;
+    QTimer playbackTimer;
+
+    // New audio methods
+    void startAudioRecording();
+    void stopAudioRecording();
+    void playRecordedAudio();
 };
 
 #endif // DISTRIBUTEDLIVEVOICECALL_H
