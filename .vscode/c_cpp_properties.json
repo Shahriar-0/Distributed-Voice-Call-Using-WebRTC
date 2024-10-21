@@ -9,7 +9,11 @@
                 "C:/Qt/6.5.3/mingw_64/include",
                 "C:/Qt/6.5.3/mingw_64/include/QtCore",
                 "C:/Qt/6.5.3/mingw_64/include/QtWidgets",
-                "C:/Qt/6.5.3/mingw_64/include/QtGui"
+                "C:/Qt/6.5.3/mingw_64/include/QtGui",
+                "C:/Qt/6.5.3/mingw_64/include/QtQml",
+                "D:/DEATH/CN_CA_1/src/SocketIO/lib/asio/asio/include",
+                "D:/DEATH/CN_CA_1/src/SocketIO/lib/rapidjson/include",
+                "D:/DEATH/CN_CA_1/src/SocketIO/lib/websocketpp/websocketpp"
             ],
             "defines": [
                 "_DEBUG",

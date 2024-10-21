@@ -4,7 +4,7 @@ SOURCES += \
         main.cpp \
         webrtc.cpp
 
-resources.files = main.qml 
+resources.files = main.qml
 resources.prefix = /$${TARGET}
 RESOURCES += resources
 
@@ -22,12 +22,40 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     webrtc.h
 
-### in file PROJECT_NAME.pro
+# libdatachannel.dll
 INCLUDEPATH += D:/DEATH/libdatachannel/include
 LIBS += -LD:/DEATH/libdatachannel/Windows/Mingw64 -ldatachannel.dll
+
+# opus
+INCLUDEPATH += D:/DEATH/opus/include
+LIBS += -LD:/DEATH/opus/Windows/Mingw64 -lopus
+
+# qt
 LIBS += -LC:/Qt/Tools/OpenSSLv3/Win_x64/bin -lcrypto-3-x64 -lssl-3-x64
 LIBS += -lws2_32
 LIBS += -lssp
 
-INCLUDEPATH += D:/DEATH/opus/include
-LIBS += -LD:/DEATH/opus/Windows/Mingw64 -lopus
+# SocketIO Headers
+HEADERS += \
+$$PWD/SocketIO/sio_client.h \
+$$PWD/SocketIO/sio_message.h \
+$$PWD/SocketIO/sio_socket.h \
+$$PWD/SocketIO/internal/sio_client_impl.h \
+$$PWD/SocketIO/internal/sio_packet.h
+
+# SocketIO Sources
+SOURCES += \
+$$PWD/SocketIO/sio_client.cpp \
+$$PWD/SocketIO/sio_socket.cpp \
+$$PWD/SocketIO/internal/sio_client_impl.cpp \
+$$PWD/SocketIO/internal/sio_packet.cpp
+
+# Include paths for SocketIO and its dependencies
+INCLUDEPATH += $$PWD/SocketIO/lib/websocketpp
+INCLUDEPATH += $$PWD/SocketIO/lib/asio/asio/include
+INCLUDEPATH += $$PWD/SocketIO/lib/rapidjson/include
+
+# Defines for WebSocket++
+DEFINES += _WEBSOCKETPP_CPP11_STL_
+DEFINES += _WEBSOCKETPP_CPP11_FUNCTIONAL_
+DEFINES += SIO_TLS
