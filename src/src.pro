@@ -1,4 +1,5 @@
 QT += quick
+QT += multimedia
 
 SOURCES += \
         distributedlivevoicecall.cpp \

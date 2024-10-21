@@ -16,8 +16,8 @@ struct RtpHeader {
 };
 #pragma pack(pop)
 
-WebRTC::WebRTC(QObject *parent) : QObject{parent}, m_audio("Audio") {
-    connect(this, &WebRTC::gatheringComplited, [this](const QString &peerID) {
+WebRTC::WebRTC(QObject* parent) : QObject{parent}, m_audio("Audio") {
+    connect(this, &WebRTC::gatheringComplited, [this](const QString& peerID) {
         m_localDescription =
             descriptionToJson(m_peerConnections[peerID]->localDescription().value());
         Q_EMIT localDescriptionGenerated(peerID, m_localDescription);
@@ -37,7 +37,7 @@ WebRTC::~WebRTC() {}
  * ====================================================
  */
 
-void WebRTC::init(const QString &id, bool isOfferer) {
+void WebRTC::init(const QString& id, bool isOfferer) {
     // Initialize WebRTC using libdatachannel library
 
     // Create an instance of rtc::Configuration to Set up ICE configuration
@@ -49,7 +49,7 @@ void WebRTC::init(const QString &id, bool isOfferer) {
     // Set up the audio stream configuration
 }
 
-void WebRTC::addPeer(const QString &peerId) {
+void WebRTC::addPeer(const QString& peerId) {
     // Create and add a new peer connection
 
     // Set up a callback for when the local description is generated
@@ -89,13 +89,13 @@ void WebRTC::addPeer(const QString &peerId) {
 }
 
 // Set the local description for the peer's connection
-void WebRTC::generateOfferSDP(const QString &peerId) {}
+void WebRTC::generateOfferSDP(const QString& peerId) {}
 
 // Generate an answer SDP for the peer
-void WebRTC::generateAnswerSDP(const QString &peerId) {}
+void WebRTC::generateAnswerSDP(const QString& peerId) {}
 
 // Add an audio track to the peer connection
-void WebRTC::addAudioTrack(const QString &peerId, const QString &trackName) {
+void WebRTC::addAudioTrack(const QString& peerId, const QString& trackName) {
     // Add an audio track to the peer connection
 
     // Handle track events
@@ -111,8 +111,7 @@ void WebRTC::addAudioTrack(const QString &peerId, const QString &trackName) {
 
 // Sends audio track data to the peer
 
-void WebRTC::sendTrack(const QString &peerId, const QByteArray &buffer) {
-
+void WebRTC::sendTrack(const QString& peerId, const QByteArray& buffer) {
     // Create the RTP header and initialize an RtpHeader struct
 
     // Create the RTP packet by appending the RTP header and the payload buffer
@@ -128,11 +127,11 @@ void WebRTC::sendTrack(const QString &peerId, const QByteArray &buffer) {
 
 // Set the remote SDP description for the peer that contains metadata about the media being
 // transmitted
-void WebRTC::setRemoteDescription(const QString &peerID, const QString &sdp) {}
+void WebRTC::setRemoteDescription(const QString& peerID, const QString& sdp) {}
 
 // Add remote ICE candidates to the peer connection
-void WebRTC::setRemoteCandidate(const QString &peerID, const QString &candidate,
-                                const QString &sdpMid) {}
+void WebRTC::setRemoteCandidate(const QString& peerID, const QString& candidate,
+                                const QString& sdpMid) {}
 
 /*
  * ====================================================
@@ -141,10 +140,10 @@ void WebRTC::setRemoteCandidate(const QString &peerID, const QString &candidate,
  */
 
 // Utility function to read the rtc::message_variant into a QByteArray
-QByteArray WebRTC::readVariant(const rtc::message_variant &data) {}
+QByteArray WebRTC::readVariant(const rtc::message_variant& data) {}
 
 // Utility function to convert rtc::Description to JSON format
-QString WebRTC::descriptionToJson(const rtc::Description &description) {}
+QString WebRTC::descriptionToJson(const rtc::Description& description) {}
 
 // Retrieves the current bit rate
 int WebRTC::bitRate() const {}

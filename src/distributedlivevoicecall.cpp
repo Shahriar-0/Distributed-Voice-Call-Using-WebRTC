@@ -1,22 +1,22 @@
 #include "distributedlivevoicecall.h"
 
-DistributedLiveVoiceCall::DistributedLiveVoiceCall(QObject *parent)
+DistributedLiveVoiceCall::DistributedLiveVoiceCall(QObject* parent)
     : QObject{parent},
-      m_callerID("")  // Initialize the callerID to an empty string
+      m_callerID("") // Initialize the callerID to an empty string
 {}
 
 // Getter for callerID
 QString DistributedLiveVoiceCall::callerID() const { return m_callerID; }
 
 // Setter for callerID
-void DistributedLiveVoiceCall::setCallerID(const QString &callerID) {
+void DistributedLiveVoiceCall::setCallerID(const QString& callerID) {
     if (m_callerID != callerID) {
         m_callerID = callerID;
-        emit callerIDChanged();  // Emit signal when callerID changes
+        emit callerIDChanged(); // Emit signal when callerID changes
     }
 }
 
-void DistributedLiveVoiceCall::startCall(const QString &callerID) {
+void DistributedLiveVoiceCall::startCall(const QString& callerID) {
     // Set the caller ID and emit the callerIDChanged signal if it has changed
     setCallerID(callerID);
 
