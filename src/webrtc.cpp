@@ -63,40 +63,40 @@ void WebRTC::addPeer(const QString &peerId)
 
     // Set up a callback for when the local description is generated
 
-    newPeer->onLocalDescription([this, peerId](const rtc::Description &description) {
-        // The local description should be emitted using the appropriate signals based on the peer's role (offerer or answerer)
+    // newPeer->onLocalDescription([this, peerId](const rtc::Description &description) {
+    //     // The local description should be emitted using the appropriate signals based on the peer's role (offerer or answerer)
 
-    });
-
-
-
-    // Set up a callback for handling local ICE candidates
-    newPeer->onLocalCandidate([this, peerId](rtc::Candidate candidate) {
-        // Emit the local candidates using the localCandidateGenerated signal
-
-    });
+    // });
 
 
 
-    // Set up a callback for when the state of the peer connection changes
-    newPeer->onStateChange([this, peerId](rtc::PeerConnection::State state) {
-        // Handle different states like New, Connecting, Connected, Disconnected, etc.
+    // // Set up a callback for handling local ICE candidates
+    // newPeer->onLocalCandidate([this, peerId](rtc::Candidate candidate) {
+    //     // Emit the local candidates using the localCandidateGenerated signal
 
-    });
+    // });
 
 
 
-    // Set up a callback for monitoring the gathering state
-    newPeer->onGatheringStateChange([this, peerId](rtc::PeerConnection::GatheringState state) {
-        // When the gathering is complete, emit the gatheringComplited signal
+    // // Set up a callback for when the state of the peer connection changes
+    // newPeer->onStateChange([this, peerId](rtc::PeerConnection::State state) {
+    //     // Handle different states like New, Connecting, Connected, Disconnected, etc.
 
-    });
+    // });
 
-    // Set up a callback for handling incoming tracks
-    newPeer->onTrack([this, peerId] (std::shared_ptr<rtc::Track> track) {
-        // handle the incoming media stream, emitting the incommingPacket signal if a stream is received
 
-    });
+
+    // // Set up a callback for monitoring the gathering state
+    // newPeer->onGatheringStateChange([this, peerId](rtc::PeerConnection::GatheringState state) {
+    //     // When the gathering is complete, emit the gatheringComplited signal
+
+    // });
+
+    // // Set up a callback for handling incoming tracks
+    // newPeer->onTrack([this, peerId] (std::shared_ptr<rtc::Track> track) {
+    //     // handle the incoming media stream, emitting the incommingPacket signal if a stream is received
+
+    // });
 
     // Add an audio track to the peer connection
 }
@@ -120,13 +120,13 @@ void WebRTC::addAudioTrack(const QString &peerId, const QString &trackName)
 
     // Handle track events
 
-    track->onMessage([this, peerId] (rtc::message_variant data) {
+    // track->onMessage([this, peerId] (rtc::message_variant data) {
 
-    });
+    // });
 
-    track->onFrame([this] (rtc::binary frame, rtc::FrameInfo info) {
+    // track->onFrame([this] (rtc::binary frame, rtc::FrameInfo info) {
 
-    });
+    // });
 
 }
 
@@ -135,7 +135,7 @@ void WebRTC::addAudioTrack(const QString &peerId, const QString &trackName)
 void WebRTC::sendTrack(const QString &peerId, const QByteArray &buffer)
 {
 
-    // Create the RTP header and initialize an RtpHeader struct
+        // Create the RTP header and initialize an RtpHeader struct
 
 
     // Create the RTP packet by appending the RTP header and the payload buffer
@@ -258,5 +258,3 @@ void WebRTC::resetIsOfferer()
 {
 
 }
-
-

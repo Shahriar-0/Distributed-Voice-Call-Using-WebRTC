@@ -1,5 +1,0 @@
-module src
-typeinfo appsrc.qmltypes
-prefer :/qt/qml/src/
-Main 1.0 Main.qml
-
