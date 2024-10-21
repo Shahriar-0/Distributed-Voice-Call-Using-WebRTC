@@ -7,7 +7,8 @@ SOURCES += \
 
 resources.files = main.qml
 resources.prefix = /$${TARGET}
-RESOURCES += resources
+RESOURCES += resources \
+    resources.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -44,23 +45,23 @@ LIBS += -lssp
 # $$PWD/SocketIO/sio_socket.h \
 # $$PWD/SocketIO/internal/sio_client_impl.h \
 # $$PWD/SocketIO/internal/sio_packet.h
-# 
+#
 # # SocketIO Sources
 # SOURCES += \
 # $$PWD/SocketIO/sio_client.cpp \
 # $$PWD/SocketIO/sio_socket.cpp \
 # $$PWD/SocketIO/internal/sio_client_impl.cpp \
 # $$PWD/SocketIO/internal/sio_packet.cpp
-# 
+#
 # # Include paths for SocketIO and its dependencies
 # INCLUDEPATH += $$PWD/SocketIO/lib/websocketpp
 # INCLUDEPATH += $$PWD/SocketIO/lib/asio/asio/include
 # INCLUDEPATH += $$PWD/SocketIO/lib/rapidjson/include
-# 
+#
 # # Defines for WebSocket++
 # DEFINES += _WEBSOCKETPP_CPP11_STL_
 # DEFINES += _WEBSOCKETPP_CPP11_FUNCTIONAL_
 # DEFINES += SIO_TLS
-# 
+#
 # # Include paths for boost
 # INCLUDEPATH += D:/DEATH/boost_1_82_0

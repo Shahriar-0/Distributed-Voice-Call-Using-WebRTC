@@ -179,3 +179,4 @@ CMakeLists.txt.user*
 *.dll
 *.exe
 
+.cache/

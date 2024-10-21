@@ -1,4 +1,5 @@
 #include <QGuiApplication>
+#include <QIcon>
 #include <QQmlApplicationEngine>
 
 #include "distributedlivevoicecall.h"
@@ -6,9 +7,13 @@
 int main(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
 
+    app.setWindowIcon(QIcon(":/assets/icon.png"));
+    
     QQmlApplicationEngine engine;
 
-    qmlRegisterType<DistributedLiveVoiceCall>("VoiceCall", 1, 0, "DistributedLiveVoiceCall");
+    DistributedLiveVoiceCall* voiceCall = new DistributedLiveVoiceCall(&engine);
+
+    qmlRegisterSingletonInstance("voiceCall", 1, 0, "DistributedLiveVoiceCall", voiceCall);
 
     const QUrl url(QStringLiteral("qrc:/src/main.qml"));
     QObject::connect(
