@@ -2,14 +2,21 @@ import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
 
+import VoiceCall 1.0
+
 Window {
     width: 280
     height: 520
     visible: true
     title: qsTr("low_mist")
 
+    DistributedLiveVoiceCall {
+        id: voiceCall
+    }
+    
     Item {
         anchors.fill: parent
+
 
         ColumnLayout {
             anchors {
@@ -54,7 +61,6 @@ Window {
 
             property bool pushed: false
 
-            height: 47
             text: "Call"
             Material.background: "green"
             Material.foreground: "white"
@@ -68,10 +74,12 @@ Window {
             onClicked: {
                 pushed = !pushed
                 if (pushed) {
+                    voiceCall.startCall(textfield.text)
                     Material.background = "red"
                     text = "End Call"
                 }
                 else {
+                    voiceCall.endCall()
                     Material.background = "green"
                     text = "Call"
                     textfield.clear()

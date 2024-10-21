@@ -13,7 +13,8 @@
                 "C:/Qt/6.5.3/mingw_64/include/QtQml",
                 "D:/DEATH/CN_CA_1/src/SocketIO/lib/asio/asio/include",
                 "D:/DEATH/CN_CA_1/src/SocketIO/lib/rapidjson/include",
-                "D:/DEATH/CN_CA_1/src/SocketIO/lib/websocketpp/websocketpp"
+                "D:/DEATH/CN_CA_1/src/SocketIO/lib/websocketpp/websocketpp",
+                "D:/DEATH/boost_1_82_0"
             ],
             "defines": [
                 "_DEBUG",
@@ -24,7 +25,8 @@
             "compilerPath": "cl.exe",
             "cStandard": "c23",
             "intelliSenseMode": "windows-msvc-x64",
-            "cppStandard": "c++23"
+            "cppStandard": "c++23",
+            "compileCommands": "${workspaceFolder}/src/build/Desktop_Qt_6_5_3_MinGW_64_bit-Debug/.qtc_clangd/compile_commands.json"
         }
     ],
     "version": 4
