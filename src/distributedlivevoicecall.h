@@ -1,12 +1,13 @@
-// File: distributedlivevoicecall.h
 #ifndef DISTRIBUTEDLIVEVOICECALL_H
 #define DISTRIBUTEDLIVEVOICECALL_H
 
+#include <opus.h>
+
+#include <QAudioSink>
+#include <QAudioSource>
+#include <QBuffer>
 #include <QDebug>
 #include <QObject>
-#include <QAudioSource>
-#include <QAudioSink>
-#include <QBuffer>
 #include <QTimer>
 
 class DistributedLiveVoiceCall : public QObject {
@@ -15,9 +16,15 @@ class DistributedLiveVoiceCall : public QObject {
 
 public:
     explicit DistributedLiveVoiceCall(QObject* parent = nullptr);
+    ~DistributedLiveVoiceCall(); // Destructor to clean up Opus objects
 
-    QString callerID() const;
-    void setCallerID(const QString& callerID);
+    QString callerID() const { return m_callerID; }
+    void setCallerID(const QString& callerID) {
+        if (m_callerID != callerID) {
+            m_callerID = callerID;
+            emit callerIDChanged();
+        }
+    }
 
 public slots:
     void startCall(const QString& callerID);
@@ -35,10 +42,19 @@ private:
     QBuffer audioBuffer;
     QTimer playbackTimer;
 
-    // New audio methods
+    // Opus members
+    OpusEncoder* opusEncoder;
+    OpusDecoder* opusDecoder;
+    int opusError;
+
+    // Audio handling methods
     void startAudioRecording();
     void stopAudioRecording();
     void playRecordedAudio();
+
+    // Opus encode/decode helpers
+    QByteArray encodeOpus(const QByteArray& pcmData);
+    QByteArray decodeOpus(const QByteArray& opusData);
 };
 
 #endif // DISTRIBUTEDLIVEVOICECALL_H
