@@ -17,7 +17,7 @@ struct RtpHeader {
 #pragma pack(pop)
 
 WebRTC::WebRTC(QObject* parent) : QObject{parent}, m_audio("Audio") {
-    connect(this, &WebRTC::gatheringComplited, [this](const QString& peerID) {
+    connect(this, &WebRTC::gatheringCompleted, [this](const QString& peerID) {
         m_localDescription =
             descriptionToJson(m_peerConnections[peerID]->localDescription().value());
         Q_EMIT localDescriptionGenerated(peerID, m_localDescription);
@@ -74,13 +74,13 @@ void WebRTC::addPeer(const QString& peerId) {
 
     // // Set up a callback for monitoring the gathering state
     // newPeer->onGatheringStateChange([this, peerId](rtc::PeerConnection::GatheringState state) {
-    //     // When the gathering is complete, emit the gatheringComplited signal
+    //     // When the gathering is complete, emit the gatheringCompleted signal
 
     // });
 
     // // Set up a callback for handling incoming tracks
     // newPeer->onTrack([this, peerId] (std::shared_ptr<rtc::Track> track) {
-    //     // handle the incoming media stream, emitting the incommingPacket signal if a stream is
+    //     // handle the incoming media stream, emitting the incomingPacket signal if a stream is
     //     received
 
     // });
