@@ -1,8 +1,6 @@
 #ifndef DISTRIBUTEDLIVEVOICECALL_H
 #define DISTRIBUTEDLIVEVOICECALL_H
 
-#include <opus.h>
-
 #include <QAudioSink>
 #include <QAudioSource>
 #include <QBuffer>
@@ -42,19 +40,10 @@ private:
     QBuffer audioBuffer;
     QTimer playbackTimer;
 
-    // Opus members
-    OpusEncoder* opusEncoder;
-    OpusDecoder* opusDecoder;
-    int opusError;
-
     // Audio handling methods
     void startAudioRecording();
     void stopAudioRecording();
     void playRecordedAudio();
-
-    // Opus encode/decode helpers
-    QByteArray encodeOpus(const QByteArray& pcmData);
-    QByteArray decodeOpus(const QByteArray& opusData);
 };
 
 #endif // DISTRIBUTEDLIVEVOICECALL_H
