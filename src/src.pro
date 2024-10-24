@@ -2,6 +2,8 @@ QT += quick
 QT += multimedia
 
 SOURCES += \
+        audioinput.cpp \
+        audiooutput.cpp \
         distributedlivevoicecall.cpp \
         main.cpp \
         webrtc.cpp
@@ -23,6 +25,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    audioinput.h \
+    audiooutput.h \
     distributedlivevoicecall.h \
     webrtc.h
 
