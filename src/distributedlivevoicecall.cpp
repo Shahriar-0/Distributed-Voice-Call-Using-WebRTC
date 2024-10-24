@@ -5,8 +5,8 @@
 #include <QMediaDevices>
 
 #define SAMPLE_RATE 48000
-#define CHANNELS 1
-#define FRAME_SIZE 960  // Opus frame size for 20ms @ 48kHz, or 960 samples
+#define CHANNELS    1
+#define FRAME_SIZE  960 // Opus frame size for 20ms @ 48kHz, or 960 samples
 
 DistributedLiveVoiceCall::DistributedLiveVoiceCall(QObject* parent)
     : QObject(parent), audioSource(nullptr), audioSink(nullptr), audioInputDevice(nullptr), opusEncoder(nullptr), opusDecoder(nullptr) {
@@ -49,8 +49,8 @@ void DistributedLiveVoiceCall::startAudioRecording() {
         delete audioSource;
     }
 
-    opusPacketList.clear();  // Clear any previous audio data
-    decodedAudioBuffer.clear();  // Clear the decoded buffer
+    opusPacketList.clear();     // Clear any previous audio data
+    decodedAudioBuffer.clear(); // Clear the decoded buffer
 
     // Clear buffer for fresh recording
     audioBuffer.close();
@@ -64,15 +64,13 @@ void DistributedLiveVoiceCall::startAudioRecording() {
 
     audioSource = new QAudioSource(QMediaDevices::defaultAudioInput(), format, this);
 
-    // We will manually read data from the audio input
     audioInputDevice = audioSource->start();
 
-    // Read from the input device in a timer or loop
     connect(audioInputDevice, &QIODevice::readyRead, this, [this]() {
         QByteArray audioData = audioInputDevice->readAll();
 
-        if (audioData.size() >= frameSize * 2) {  // Ensure at least 1 frame of data (2 bytes per sample)
-            encodeAndStoreAudio(audioData.left(frameSize * 2));  // Only pass frame-sized chunks to encoder
+        if (audioData.size() >= frameSize * 2) {                // Ensure at least 1 frame of data (2 bytes per sample)
+            encodeAndStoreAudio(audioData.left(frameSize * 2)); // Only pass frame-sized chunks to encoder
         }
     });
 
@@ -91,8 +89,8 @@ void DistributedLiveVoiceCall::stopAudioRecording() {
 }
 
 void DistributedLiveVoiceCall::encodeAndStoreAudio(const QByteArray& audioData) {
-    std::vector<unsigned char> opusData(4000);  // Max packet size
-    int frameSize = audioData.size() / 2;  // 2 bytes per sample (16-bit audio)
+    std::vector<unsigned char> opusData(4000); // Max packet size
+    int frameSize = audioData.size() / 2;      // 2 bytes per sample (16-bit audio)
 
     int encodedBytes = opus_encode(opusEncoder,
                                    reinterpret_cast<const opus_int16*>(audioData.data()),
@@ -102,8 +100,9 @@ void DistributedLiveVoiceCall::encodeAndStoreAudio(const QByteArray& audioData) 
 
     if (encodedBytes > 0) {
         QByteArray encodedOpusData(reinterpret_cast<const char*>(opusData.data()), encodedBytes);
-        opusPacketList.append(encodedOpusData);  // Store encoded packet
-    } else {
+        opusPacketList.append(encodedOpusData);
+    }
+    else {
         qWarning() << "Opus encoding failed with error:" << encodedBytes;
     }
 }
@@ -121,7 +120,6 @@ void DistributedLiveVoiceCall::playRecordedAudio() {
         decodeAndAccumulateAudio(packet);
     }
 
-    // Play the entire accumulated decoded audio
     if (!decodedAudioBuffer.isEmpty()) {
         QAudioFormat format;
         format.setSampleRate(SAMPLE_RATE);
@@ -134,7 +132,7 @@ void DistributedLiveVoiceCall::playRecordedAudio() {
         audioSink = new QAudioSink(QMediaDevices::defaultAudioOutput(), format, this);
 
         audioBuffer.setData(decodedAudioBuffer);
-        audioBuffer.open(QIODevice::ReadOnly);  // Open the buffer for reading
+        audioBuffer.open(QIODevice::ReadOnly);
         audioSink->start(&audioBuffer);
 
         qDebug() << "Playing accumulated decoded audio.";
@@ -153,8 +151,9 @@ void DistributedLiveVoiceCall::decodeAndAccumulateAudio(const QByteArray& encode
 
     if (decodedBytes > 0) {
         QByteArray decodedAudio(reinterpret_cast<const char*>(decodedOutput.data()), decodedBytes * 2);
-        decodedAudioBuffer.append(decodedAudio);  // Accumulate decoded audio
-    } else {
+        decodedAudioBuffer.append(decodedAudio);
+    }
+    else {
         qWarning() << "Opus decoding failed with error:" << decodedBytes;
     }
 }
