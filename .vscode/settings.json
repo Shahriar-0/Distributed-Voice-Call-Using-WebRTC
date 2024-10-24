@@ -95,6 +95,7 @@
         "*.py": "python",
         "*.json": "json",
         "qaudiosink": "cpp",
-        "qaudiosource": "cpp"
+        "qaudiosource": "cpp",
+        "execution": "cpp"
     }
 }

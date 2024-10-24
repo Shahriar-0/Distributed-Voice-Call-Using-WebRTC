@@ -11,7 +11,7 @@ AudioOutput::AudioOutput(QObject* parent)
     audioFormat.setSampleFormat(QAudioFormat::Int16);
 
     int error;
-    opusDecoder = opus_decoder_create(48000, 1, &error); // 48kHz, mono
+    opusDecoder = opus_decoder_create(48000, 1, &error);
     if (error != OPUS_OK) {
         qWarning() << "Failed to create Opus decoder:" << opus_strerror(error);
     }
@@ -33,7 +33,6 @@ void AudioOutput::addData(const QByteArray& data) {
 }
 
 void AudioOutput::play() {
-    // QMutexLocker locker(&mutex);
     if (audioQueue.isEmpty())
         return;
 
