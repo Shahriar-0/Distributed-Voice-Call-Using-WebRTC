@@ -7,7 +7,11 @@ AudioInput::AudioInput(QObject* parent)
       opusFrameSize(960) {
     int error;
     opusEncoder = opus_encoder_create(48000, 1, OPUS_APPLICATION_VOIP, &error); // 48kHz, mono
-    opus_encoder_ctl(opusEncoder, OPUS_SET_COMPLEXITY(10));
+    opus_encoder_ctl(opusEncoder, OPUS_SET_BITRATE(64000));  // Set bitrate to 64 kbps
+    opus_encoder_ctl(opusEncoder, OPUS_SET_COMPLEXITY(10));  // Keep maximum complexity for better quality
+    opus_encoder_ctl(opusEncoder, OPUS_SET_INBAND_FEC(1));   // Enable Forward Error Correction (FEC)
+    opus_encoder_ctl(opusEncoder, OPUS_SET_DTX(0));          // Disable DTX to avoid noise during silence
+
     if (error != OPUS_OK) {
         qWarning() << "Failed to create Opus encoder:" << opus_strerror(error);
     }
@@ -70,11 +74,10 @@ qint64 AudioInput::writeData(const char* data, qint64 len) {
         qWarning() << "Opus encoding failed:" << opus_strerror(encodedBytes);
         return -1;
     }
-    QByteArray packet(reinterpret_cast<const char*>(encodedData), encodedBytes);
-    emit newAudioData(packet);
     // raw audio
     // QByteArray packet(data, len);
-    // emit newAudioData(packet);
+    QByteArray packet(reinterpret_cast<const char*>(encodedData), encodedBytes);
+    emit newAudioData(packet);
 
     qDebug() << "Encoded" << len << "bytes of raw audio into" << encodedBytes << "bytes of Opus";
 

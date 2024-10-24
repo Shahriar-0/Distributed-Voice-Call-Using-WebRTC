@@ -94,6 +94,7 @@
         "xstring": "cpp",
         "*.py": "python",
         "*.json": "json",
-        "qaudiosink": "cpp"
+        "qaudiosink": "cpp",
+        "qaudiosource": "cpp"
     }
 }

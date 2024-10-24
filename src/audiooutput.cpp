@@ -50,4 +50,6 @@ void AudioOutput::play() {
     if (encodedData.size() < 100)
         return;
     audioDevice->write(reinterpret_cast<const char*>(decodedData), decodedSamples * sizeof(opus_int16));
+    // for raw audio
+    // audioDevice->write(encodedData);
 }
