@@ -19,11 +19,11 @@ public:
     QString callerID() const;
     void setCallerID(const QString& callerID);
 
-public slots:
+public Q_SLOTS:
     void startCall(const QString& callerID);
     void endCall();
 
-signals:
+Q_SIGNALS:
     void callerIDChanged();
 
 private:
