@@ -7,6 +7,9 @@
 #include <QDebug>
 #include <QObject>
 #include <QTimer>
+#include <opus.h>
+#include <QByteArray>
+#include <QList>
 
 class DistributedLiveVoiceCall : public QObject {
     Q_OBJECT
@@ -14,7 +17,7 @@ class DistributedLiveVoiceCall : public QObject {
 
 public:
     explicit DistributedLiveVoiceCall(QObject* parent = nullptr);
-    ~DistributedLiveVoiceCall(); // Destructor to clean up Opus objects
+    ~DistributedLiveVoiceCall();
 
     QString callerID() const { return m_callerID; }
     void setCallerID(const QString& callerID) {
@@ -24,26 +27,38 @@ public:
         }
     }
 
-public slots:
+public Q_SLOTS:
     void startCall(const QString& callerID);
     void endCall();
 
-signals:
+Q_SIGNALS:
     void callerIDChanged();
 
 private:
     QString m_callerID;
 
-    // Audio members
     QAudioSource* audioSource;
     QAudioSink* audioSink;
+    QIODevice* audioInputDevice;
     QBuffer audioBuffer;
     QTimer playbackTimer;
+
+    OpusEncoder* opusEncoder;
+    OpusDecoder* opusDecoder;
+    int frameSize;
+
+    // Store encoded Opus packets
+    QList<QByteArray> opusPacketList;
+
+    // Buffer for storing the final decoded audio stream
+    QByteArray decodedAudioBuffer;
 
     // Audio handling methods
     void startAudioRecording();
     void stopAudioRecording();
+    void encodeAndStoreAudio(const QByteArray& audioData);
     void playRecordedAudio();
+    void decodeAndAccumulateAudio(const QByteArray& encodedOpusData);
 };
 
 #endif // DISTRIBUTEDLIVEVOICECALL_H
