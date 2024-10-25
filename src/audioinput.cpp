@@ -68,7 +68,7 @@ bool AudioInput::stopAudio() {
 
 qint64 AudioInput::writeData(const char* data, qint64 len) {
     unsigned char encodedData[4000];
-    int encodedBytes = opus_encode(opusEncoder, reinterpret_cast<const opus_int16*>(data), opusFrameSize, encodedData, 480);
+    int encodedBytes = opus_encode(opusEncoder, reinterpret_cast<const opus_int16*>(data), opusFrameSize, encodedData, 960);
 
     if (encodedBytes < 0) {
         qWarning() << "Opus encoding failed:" << opus_strerror(encodedBytes);
