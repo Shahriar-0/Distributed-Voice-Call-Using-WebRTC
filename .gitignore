@@ -181,3 +181,6 @@ CMakeLists.txt.user*
 
 .cache/
 .vscode
+*.pro
+*.qrc
+build/
