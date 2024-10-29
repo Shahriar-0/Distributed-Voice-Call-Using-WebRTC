@@ -181,3 +181,4 @@ CMakeLists.txt.user*
 
 .cache/
 *.pro
+*.qrc
