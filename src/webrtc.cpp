@@ -57,13 +57,13 @@ void WebRTC::init(const QString& id, bool isOfferer) {
     // Initialize WebRTC using libdatachannel library
     this->m_isOfferer = isOfferer;
     this->m_localId = id;
-    
+
     // Create an instance of rtc::Configuration to Set up ICE configuration
     rtc::Configuration config;
-    
+
     // Add a STUN server to help peers find their public IP addresses
     config.iceServers.emplace_back("stun:stun.l.google.com:19302");
-    
+
     // Add a TURN server for relaying media if a direct connection can't be established
     // config.iceServers.emplace_back("turn:turnserver.com:3478", "username", "password");
 
@@ -92,22 +92,23 @@ void WebRTC::addPeer(const QString& peerId) {
     // Set up a callback for handling local ICE candidates
     newPeer->onLocalCandidate([this, peerId](const rtc::Candidate& candidate) {
         QString candidateStr = QString::fromStdString(candidate.candidate());
-        Q_EMIT localCandidateGenerated(peerId, candidateStr);
+        Q_EMIT localCandidateGenerated(peerId, QString::fromStdString(candidate.candidate()), QString());
     });
 
     // // Set up a callback for when the state of the peer connection changes
     newPeer->onStateChange([this, peerId](rtc::PeerConnection::State state) {
         if (state == rtc::PeerConnection::State::Connected) {
-            Q_EMIT connected(peerId);
+            Q_EMIT gatheringComplited(peerId);
         } else if (state == rtc::PeerConnection::State::Disconnected) {
-            Q_EMIT disconnected(peerId);
+            // FIXME
+            qDebug() << "Peer disconnected:" << peerId;
         }
     });
 
     // // Set up a callback for monitoring the gathering state
     newPeer->onGatheringStateChange([this, peerId](rtc::PeerConnection::GatheringState state) {
         if (state == rtc::PeerConnection::GatheringState::Complete) {
-            Q_EMIT gatheringCompleted(peerId);
+            Q_EMIT gatheringComplited(peerId);
         }
     });
 
@@ -118,7 +119,7 @@ void WebRTC::addPeer(const QString& peerId) {
     newPeer->onTrack([this, peerId](std::shared_ptr<rtc::Track> track) {
         track->onMessage([this, peerId](rtc::message_variant data) {
             QByteArray buffer = readVariant(data);
-            Q_EMIT incomingPacket(peerId, buffer, buffer.size());
+            Q_EMIT incommingPacket(peerId, buffer, buffer.size());
         });
     });
 
@@ -146,16 +147,16 @@ void WebRTC::addAudioTrack(const QString& peerId, const QString& trackName) {
     auto audioTrack = peer->addTrack(m_audio);
 
     // Add an audio track to the peer connection
-    
+
     audioTrack->onMessage([this, peerId](rtc::message_variant data) {
         QByteArray buffer = readVariant(data);
-        Q_EMIT incomingPacket(peerId, buffer, buffer.size());
+        Q_EMIT incommingPacket(peerId, buffer, buffer.size());
     });
 
 
-    audioTrack->onFrame([this] (rtc::binary frame, rtc::FrameInfo info) {
-        // TODO: ?
-    });
+    // audioTrack->onFrame([this] (rtc::binary frame, rtc::FrameInfo info) {
+    //     // TODO: ?
+    // });
 }
 
 // Sends audio track data to the peer
