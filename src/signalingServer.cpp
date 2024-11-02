@@ -18,8 +18,6 @@ void SignalingServer::incomingConnection(qintptr socketDescriptor) {
 
 void SignalingServer::onNewConnection() {
     QTcpSocket *clientSocket = nextPendingConnection();
-
-    qDebug() << "Server: New Connection";
 }
 
 void SignalingServer::onReadyRead() {
@@ -31,20 +29,24 @@ void SignalingServer::onReadyRead() {
     QJsonObject obj = doc.object();
 
     QString clientId = obj["clientId"].toString();
-    QJsonObject sdp = obj["sdp"].toObject();
+    QString sourceId = obj["sourceId"].toString();
+    QString sdp = obj["sdp"].toString();
     QString targetId = obj["targetId"].toString();
 
     if (!clientId.isEmpty()) {
-        clients[clientSocket] = clientId;
+        clients[clientId] = clientSocket;
+        qDebug() << "Server: New Connection from" << clientId;
+
         return;
     }
     else {
-        if (hasThisClient(targetId)) {
-            // Forward SDP to the target client
-            QTcpSocket *targetSocket = getClientSocketById(targetId);
+        if (clients.contains(targetId)) {
+            qDebug() << targetId;
+            QTcpSocket *targetSocket = clients[targetId];
             if (targetSocket) {
                 QJsonObject response;
                 response["sdp"] = sdp;
+                response["sourceId"] = sourceId;
                 targetSocket->write(QJsonDocument(response).toJson());
             }
         }
@@ -53,28 +55,12 @@ void SignalingServer::onReadyRead() {
 }
 
 void SignalingServer::onDisconnected() {
-    QTcpSocket *clientSocket = qobject_cast<QTcpSocket *>(sender());
-    if (!clientSocket) return;
+    // QTcpSocket *clientSocket = qobject_cast<QTcpSocket *>(sender());
+    // if (!clientSocket) return;
 
-    QString clientId = clients[clientSocket];
-    clients.remove(clientSocket);
-    clientSocket->deleteLater();
+    // QString clientId = clients[clientSocket];
+    // clients.remove(clientSocket);
+    // clientSocket->deleteLater();
 
     qDebug() << "Server: client disconnected";
-}
-
-QTcpSocket* SignalingServer::getClientSocketById(const QString &clientId) {
-    for (auto it = clients.begin(); it != clients.end(); ++it) {
-        if (it.value() == clientId)
-            return it.key();
-    }
-    return nullptr;
-}
-
-bool SignalingServer::hasThisClient(const QString &clientId) {
-    for (auto it = clients.begin(); it != clients.end(); ++it) {
-        if (it.value() == clientId)
-            return true;
-    }
-    return false;
 }

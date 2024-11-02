@@ -17,13 +17,17 @@ Client::Client(QObject* parent, const QString &clientId, bool isOfferer)
     connect(socket, &QTcpSocket::disconnected, this, &Client::onDisconnected);
 
     // webrtc
-    connect(&webrtc, &WebRTC::localDescriptionGenerated, this, &Client::x);
+    connect(&webrtc, &WebRTC::localDescriptionGenerated, this, &Client::sdpReady);
 }
 
-void Client::x(const QString& peerId, const QString& sdp) {
-    qDebug() << peerId << sdp;
+void Client::sdpReady(const QString& peerId, const QString& sdp) {
+    qDebug() << "sdp Ready";
+    this->sendSdpToServer(sdp, this->otherClientId);
 }
-void Client::offerCall() {
+
+void Client::offerCall(QString answererId) {
+    this->otherClientId = answererId;
+
     webrtc.init(this->clientId, true);
     webrtc.addPeer(this->peerId);
     webrtc.generateOfferSDP(this->peerId);
@@ -41,9 +45,10 @@ void Client::connectToServer(const QString &serverIp, int serverPort) {
     socket->connectToHost(QHostAddress(serverIp), serverPort);
 }
 
-void Client::sendSdpToClient(const QJsonObject &sdp, const QString &targetId) {
+void Client::sendSdpToServer(const QString &sdp, const QString &targetId) {
     if (socket->state() == QAbstractSocket::ConnectedState) {
         QJsonObject message;
+        message["sourceId"] = clientId;
         message["sdp"] = sdp;
         message["targetId"] = targetId;
 
@@ -55,14 +60,13 @@ void Client::sendSdpToClient(const QJsonObject &sdp, const QString &targetId) {
 }
 
 void Client::onConnected() {
-        qDebug() << "Connected to signaling server.";
+    qDebug() << "Connected to signaling server.";
 
-        QJsonObject message;
-        message["clientId"] = clientId;
-        QJsonDocument doc(message);
-        socket->write(doc.toJson());
+    QJsonObject message;
+    message["clientId"] = clientId;
+    QJsonDocument doc(message);
+    socket->write(doc.toJson());
 
-        // this->sendSdpToClient("sddppp", "client2");
     }
 
 void Client::onReadyRead() {
@@ -70,7 +74,10 @@ void Client::onReadyRead() {
     QJsonDocument doc = QJsonDocument::fromJson(data);
     QJsonObject obj = doc.object();
 
-    QJsonObject receivedSdp = obj["sdp"].toObject();
+    QString sourceId = obj["sourceId"].toString();
+    QString receivedSdp = obj["sdp"].toString();
+
+    qDebug() << clientId << "received:" << receivedSdp << "from" << sourceId;
 
     if (!receivedSdp.isEmpty()) {
         emit sdpReceived(receivedSdp); 

@@ -25,7 +25,7 @@ private slots:
 private:
     QTcpSocket* getClientSocketById(const QString &clientId);
     bool hasThisClient(const QString &clientId);
-    QMap<QTcpSocket *, QString> clients;  // Maps sockets to client IDs
+    QMap<QString, QTcpSocket*> clients;  // Maps sockets to client IDs
 };
 
 #endif // SIGNALINGSERVER_H
