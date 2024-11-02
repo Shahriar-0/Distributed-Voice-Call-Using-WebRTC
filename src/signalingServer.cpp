@@ -1,69 +1,81 @@
-#include "SignalingServer.h"
-#include <QDebug>
-#include <QtWebSockets>
-#include <format>
+#include "signalingserver.h"
 
-SignalingServer::SignalingServer(QObject *parent) : QObject(parent) {
-	server = new QWebSocketServer("SignalingServer", QWebSocketServer::NonSecureMode, this);
-	QObject::connect(server, &QWebSocketServer::newConnection, this,
-	                 &SignalingServer::onNewConnection);
+SignalingServer::SignalingServer(QObject *parent)
+    : QTcpServer(parent) {
+    connect(this, &QTcpServer::newConnection, this, &SignalingServer::onNewConnection);
 }
 
-bool SignalingServer::listen(const QHostAddress &address, quint16 port) {
-	return server->listen(address, port);
+bool SignalingServer::startServer(const QHostAddress &address, quint16 port) {
+    return listen(address, port);
+}
+
+void SignalingServer::incomingConnection(qintptr socketDescriptor) {
+    QTcpSocket *clientSocket = new QTcpSocket(this);
+    clientSocket->setSocketDescriptor(socketDescriptor);
+    connect(clientSocket, &QTcpSocket::readyRead, this, &SignalingServer::onReadyRead);
+    connect(clientSocket, &QTcpSocket::disconnected, this, &SignalingServer::onDisconnected);
 }
 
 void SignalingServer::onNewConnection() {
-	auto webSocket = server->nextPendingConnection();
-	auto client_id = webSocket->requestUrl().path().split("/").at(1);
-        qInfo() << QString("Client %1 connected").arg(client_id.toUtf8().constData()) ;
+    QTcpSocket *clientSocket = nextPendingConnection();
 
-	clients[client_id] = webSocket;
+    qDebug() << "Server: New Connection";
+}
 
-	webSocket->setObjectName(client_id);
-	QObject::connect(webSocket, &QWebSocket::disconnected, this, &SignalingServer::onDisconnected);
-	QObject::connect(webSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
-	                 this, &SignalingServer::onWebSocketError);
-	QObject::connect(webSocket, &QWebSocket::binaryMessageReceived, this,
-	                 &SignalingServer::onBinaryMessageReceived);
-	QObject::connect(webSocket, &QWebSocket::textMessageReceived, this,
-	                 &SignalingServer::onTextMessageReceived);
+void SignalingServer::onReadyRead() {
+    QTcpSocket *clientSocket = qobject_cast<QTcpSocket *>(sender());
+    if (!clientSocket) return;
+
+    QByteArray data = clientSocket->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    QJsonObject obj = doc.object();
+
+    QString clientId = obj["clientId"].toString();
+    QString sdp = obj["sdp"].toString();
+    QString targetId = obj["targetId"].toString();
+
+    if (!clientId.isEmpty()) {
+        clients[clientSocket] = clientId;
+        qDebug() << clientId;
+        return;
+    }
+    else {
+        if (hasThisClient(targetId)) {
+            // Forward SDP to the target client
+            QTcpSocket *targetSocket = getClientSocketById(targetId);
+            if (targetSocket) {
+                QJsonObject response;
+                response["sdp"] = sdp;
+                targetSocket->write(QJsonDocument(response).toJson());
+            }
+        }
+    }
+
 }
 
 void SignalingServer::onDisconnected() {
-	QWebSocket *webSocket = qobject_cast<QWebSocket *>(sender());
-	clients.remove(webSocket->objectName());
+    QTcpSocket *clientSocket = qobject_cast<QTcpSocket *>(sender());
+    if (!clientSocket) return;
+
+    QString clientId = clients[clientSocket];
+    clients.remove(clientSocket);
+    clientSocket->deleteLater();
+
+    qDebug() << "Server: client disconnected";
 }
 
-void SignalingServer::onWebSocketError(QAbstractSocket::SocketError error) {
-    qDebug() << QString("Client %1 << %2").arg(sender()->objectName().toUtf8().constData()).arg(QString::number(error).toUtf8().constData());
-
+QTcpSocket* SignalingServer::getClientSocketById(const QString &clientId) {
+    for (auto it = clients.begin(); it != clients.end(); ++it) {
+        if (it.value() == clientId)
+            return it.key();
+    }
+    return nullptr;
 }
 
-void SignalingServer::onBinaryMessageReceived(const QByteArray &message) {
-	qInfo() << QString::fromStdString(std::format(
-	    "Client {} << {}", sender()->objectName().toUtf8().constData(), message.constData()));
-}
-
-void SignalingServer::onTextMessageReceived(const QString &message) {
-	QWebSocket *webSocket = qobject_cast<QWebSocket *>(sender());
-
-	qInfo() << QString::fromStdString(std::format("Client {} << {}",
-	                                              webSocket->objectName().toUtf8().constData(),
-	                                              message.toUtf8().constData()));
-
-	auto JsonObject = QJsonDocument::fromJson(message.toUtf8()).object();
-	auto destination_id = JsonObject["id"].toString();
-	auto destination_websocket = clients[destination_id];
-	if (destination_websocket) {
-		JsonObject["id"] = webSocket->objectName();
-		auto data = QJsonDocument(JsonObject).toJson(QJsonDocument::Compact);
-		qInfo() << QString::fromStdString(
-		    std::format("Client {} >> {}", destination_id.toUtf8().constData(), data.constData()));
-		destination_websocket->sendTextMessage(QString(data));
-		destination_websocket->flush();
-	} else {
-		qInfo() << QString::fromStdString(
-		    std::format("Client {} not found", destination_id.toUtf8().constData()));
-	}
+bool SignalingServer::hasThisClient(const QString &clientId) {
+    for (auto it = clients.begin(); it != clients.end(); ++it) {
+        if (it.value() == clientId)
+            return true;
+    }
+    return false;
 }

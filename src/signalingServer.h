@@ -1,29 +1,31 @@
 #ifndef SIGNALINGSERVER_H
 #define SIGNALINGSERVER_H
 
-#include <QAbstractSocket>
-#include <QByteArray>
-#include <QHostAddress>
-#include <QObject>
-#include <QString>
+#include <QTcpServer>
+#include <QTcpSocket>
+#include <QMap>
+#include <QJsonDocument>
+#include <QJsonObject>
 
-class QWebSocketServer;
-class QWebSocket;
-class SignalingServer : public QObject {
-	Q_OBJECT
+class SignalingServer : public QTcpServer {
+    Q_OBJECT
+
 public:
-	explicit SignalingServer(QObject *parent = nullptr);
-	bool listen(const QHostAddress &address = QHostAddress::Any, quint16 port = 0);
+    explicit SignalingServer(QObject *parent = nullptr);
+    bool startServer(const QHostAddress &address, quint16 port);
+
+protected:
+    void incomingConnection(qintptr socketDescriptor) override;
+
 private slots:
-	void onNewConnection();
-	void onDisconnected();
-	void onWebSocketError(QAbstractSocket::SocketError error);
-	void onBinaryMessageReceived(const QByteArray &message);
-	void onTextMessageReceived(const QString &message);
+    void onNewConnection();
+    void onReadyRead();
+    void onDisconnected();
 
 private:
-	QWebSocketServer *server;
-	QMap<QString, QWebSocket *> clients;
+    QTcpSocket* getClientSocketById(const QString &clientId);
+    bool hasThisClient(const QString &clientId);
+    QMap<QTcpSocket *, QString> clients;  // Maps sockets to client IDs
 };
 
 #endif // SIGNALINGSERVER_H
