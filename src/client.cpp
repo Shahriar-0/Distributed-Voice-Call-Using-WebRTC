@@ -1,29 +1,58 @@
 #include "client.h"
 
-Client::Client(QObject* parent)
-    : QObject{parent}, webrtc() {
-        QHostAddress destinationAddress("192.168.1.100");
-        quint16 destinationPort = 1234;
-
-        // init all the fucking motherfuckers
-
-        webrtc.init(this->id, this->is_offerer);
-        webrtc.addPeer(this->peerId);
-
-        if(this->is_offerer) {
-            webrtc.generateOfferSDP(this->peerId);
-        }
-        else {
-            webrtc.generateAnswerSDP(this->peerId);
-        }
-
-        QJsonObject sdp;
-        // key-val all the fucking motherfuckers
-        sdp["ice"] = NULL;
-
-        QJsonDocument jsonDoc(sdp);
-        
-        // webrtc.setRemoteDescription(this->peerId, NULL);
-        webrtc.setRemoteCandidate(this->peerId, NULL);
-        
+Client::Client(QObject* parent, const QString &clientId)
+    : QObject{parent} {
+    
+    this->clientId = clientId;
+    this->socket = new QTcpSocket(this);
+    connect(socket, &QTcpSocket::connected, this, &Client::onConnected);
+    connect(socket, &QTcpSocket::readyRead, this, &Client::onReadyRead);
+    connect(socket, &QTcpSocket::disconnected, this, &Client::onDisconnected);
 }
+
+void Client::connectToServer(const QString &serverIp, int serverPort) {
+    socket->connectToHost(QHostAddress(serverIp), serverPort);
+}
+
+void Client::sendSdpToClient(const QString &sdp, const QString &targetId) {
+    // if (socket->state() == QAbstractSocket::ConnectedState) {
+    QJsonObject message;
+    message["sdp"] = sdp;
+    message["targetId"] = targetId;
+
+    QJsonDocument doc(message);
+    socket->write(doc.toJson());
+    // } else {
+    //     qDebug() << "Not connected to server.";
+    // }
+}
+
+void Client::onConnected() {
+        qDebug() << "Connected to signaling server.";
+
+        QJsonObject message;
+        message["clientId"] = clientId;
+        QJsonDocument doc(message);
+        socket->write(doc.toJson());
+
+        // this->sendSdpToClient("sddppp", "client2");
+    }
+
+void Client::onReadyRead() {
+    QByteArray data = socket->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    QJsonObject obj = doc.object();
+
+    QString receivedSdp = obj["sdp"].toString();
+    qDebug() << this->clientId << " : " << receivedSdp << '\n';
+
+    if (!receivedSdp.isEmpty()) {
+        emit sdpReceived(receivedSdp); 
+    }
+}
+
+void Client::onDisconnected() {
+    qDebug() << "Disconnected from server.";
+}
+
+

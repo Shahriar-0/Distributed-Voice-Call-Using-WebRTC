@@ -11,14 +11,24 @@
 class Client : public QObject {
     Q_OBJECT
 public:
-    explicit Client(QObject* parent = nullptr);
+    explicit Client(QObject* parent = nullptr, const QString &clientId = "");
+    void connectToServer(const QString &serverIp, int serverPort);
+    void sendSdpToClient(const QString &sdp, const QString &targetId);
 private:
     WebRTC webrtc;
-    QUdpSocket udpSocket;
     QString peerId;
-    QString id;
     bool is_offerer;
+    QString clientId;
+    QTcpSocket *socket;
+
+
+    void onConnected();
+    void onReadyRead();
+    void onDisconnected();
+
 signals:
+    void sdpReceived(const QString &sdp);
+    // void connectedToServer();
 };
 
-#endif // CLIENT_H
+#endif
