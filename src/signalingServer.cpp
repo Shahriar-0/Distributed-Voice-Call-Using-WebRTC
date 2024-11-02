@@ -16,8 +16,7 @@ bool SignalingServer::listen(const QHostAddress &address, quint16 port) {
 void SignalingServer::onNewConnection() {
 	auto webSocket = server->nextPendingConnection();
 	auto client_id = webSocket->requestUrl().path().split("/").at(1);
-	qInfo() << QString::fromStdString(
-	    std::format("Client {} connected", client_id.toUtf8().constData()));
+        qInfo() << QString("Client %1 connected").arg(client_id.toUtf8().constData()) ;
 
 	clients[client_id] = webSocket;
 
@@ -37,9 +36,8 @@ void SignalingServer::onDisconnected() {
 }
 
 void SignalingServer::onWebSocketError(QAbstractSocket::SocketError error) {
-	qDebug() << QString::fromStdString(std::format("Client {} << {}",
-	                                               sender()->objectName().toUtf8().constData(),
-	                                               QString::number(error).toUtf8().constData()));
+    qDebug() << QString("Client %1 << %2").arg(sender()->objectName().toUtf8().constData()).arg(QString::number(error).toUtf8().constData());
+
 }
 
 void SignalingServer::onBinaryMessageReceived(const QByteArray &message) {
