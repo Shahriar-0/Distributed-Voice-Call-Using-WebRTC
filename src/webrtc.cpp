@@ -18,18 +18,18 @@ struct RtpHeader {
 #pragma pack(pop)
 
 WebRTC::WebRTC(QObject* parent) : QObject{parent} {
-    // connect(this, &WebRTC::gatheringComplited, [this](const QString& peerID) {
-    //     m_localDescription =
-    //         descriptionToJson(m_peerConnections[peerID]->localDescription().value());
-    //     Q_EMIT localDescriptionGenerated(peerID, m_localDescription);
+    connect(this, &WebRTC::gatheringComplited, [this](const QString& peerId) {
+        // this->m_peerSdps[peerId] = m_peerConnections[peerId]->localDescription().value();
+        this->m_localDescription = descriptionToJson(m_peerConnections[peerId]->localDescription().value());
 
-    //     if (m_isOfferer)
-    //         Q_EMIT this->offerIsReady(peerID, m_localDescription);
-    //     else
-    //         Q_EMIT this->answerIsReady(peerID, m_localDescription);
-    // });
+        Q_EMIT localDescriptionGenerated(peerId, m_localDescription);
 
-    // connect(this, &WebRTC::offerIsReady, this, &WebRTC::x);
+        if (m_isOfferer)
+            Q_EMIT this->offerIsReady(peerId, m_localDescription);
+        else
+            Q_EMIT this->answerIsReady(peerId, m_localDescription);
+    });
+
 }
 
 WebRTC::~WebRTC() {}
@@ -80,12 +80,12 @@ void WebRTC::addPeer(const QString& peerId) {
     this->m_peerConnections[peerId] = newPeer;
 
     // Set up a callback for when the local description is generated
-    newPeer->onLocalDescription([this, peerId](const rtc::Description& description) {
-        if (m_isOfferer)
-            Q_EMIT offerIsReady(peerId, descriptionToJson(description));
-        else
-            Q_EMIT answerIsReady(peerId, descriptionToJson(description));
-    });
+    // newPeer->onLocalDescription([this, peerId](const rtc::Description& description) {
+    //     if (m_isOfferer)
+    //         Q_EMIT offerIsReady(peerId, descriptionToJson(description));
+    //     else
+    //         Q_EMIT answerIsReady(peerId, descriptionToJson(description));
+    // });
 
     // Set up a callback for handling local ICE candidates
     newPeer->onLocalCandidate([this, peerId](const rtc::Candidate& candidate) {
@@ -95,18 +95,18 @@ void WebRTC::addPeer(const QString& peerId) {
 
     // Set up a callback for when the state of the peer connection changes
     newPeer->onStateChange([this, peerId](rtc::PeerConnection::State state) {
-        std::cout << state << std::endl;
-        // if (state == rtc::PeerConnection::State::Connected) {
-        //     Q_EMIT gatheringComplited(peerId);
-        // } else if (state == rtc::PeerConnection::State::Disconnected) {
-        //     // FIXME 
-        //     qDebug() << "Peer disconnected:" << peerId;
-        // }
+        std::cout << "Peer State Changed to:" << state << std::endl;
+        if (state == rtc::PeerConnection::State::Connected) {
+            // Q_EMIT gatheringComplited(peerId);
+        } else if (state == rtc::PeerConnection::State::Disconnected) {
+            // qDebug() << "Peer disconnected:" << peerId;
+        }
     });
 
     // Set up a callback for monitoring the gathering state
     newPeer->onGatheringStateChange([this, peerId](rtc::PeerConnection::GatheringState state) {
         if (state == rtc::PeerConnection::GatheringState::Complete) {
+            qDebug() << "gathering completed";
             Q_EMIT gatheringComplited(peerId);
         }
     });
@@ -131,7 +131,6 @@ void WebRTC::generateOfferSDP(const QString& peerId) {
         qDebug() << "Peer ID not found:" << peerId;
         return;
     }
-
     auto peer = m_peerConnections[peerId];    
     peer->setLocalDescription(rtc::Description::Type::Offer);
 }
@@ -153,9 +152,7 @@ void WebRTC::addAudioTrack(const QString& peerId, const QString& trackName) {
         Q_EMIT incommingPacket(peerId, buffer, buffer.size());
     });
 
-    audioTrack->onFrame([this] (rtc::binary frame, rtc::FrameInfo info) {
-        // TODO: ?
-    });
+    m_peerTracks[peerId] = audioTrack;
 }
 
 // Sends audio track data to the peer

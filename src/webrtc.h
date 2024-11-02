@@ -44,18 +44,18 @@ Q_SIGNALS:
 
     void incommingPacket(const QString& peerId, const QByteArray& data, qint64 len);
 
-    void localDescriptionGenerated(const QString& peerID, const QString& sdp);
+    void localDescriptionGenerated(const QString& peerId, const QString& sdp);
 
-    void localCandidateGenerated(const QString& peerID, const QString& candidate,
+    void localCandidateGenerated(const QString& peerId, const QString& candidate,
                                  const QString& sdpMid);
 
     void isOffererChanged();
 
-    void gatheringComplited(const QString& peerID);
+    void gatheringComplited(const QString& peerId);
 
-    void offerIsReady(const QString& peerID, const QString& description);
+    void offerIsReady(const QString& peerId, const QString& description);
 
-    void answerIsReady(const QString& peerID, const QString& description);
+    void answerIsReady(const QString& peerId, const QString& description);
 
     void ssrcChanged();
 
@@ -64,9 +64,9 @@ Q_SIGNALS:
     void bitRateChanged();
 
 public Q_SLOTS:
-    void setRemoteCandidate(const QString& peerID, const QString& candidate, const QString& sdpMid);
-    void setRemoteDescription(const QString& peerID, const QString& sdp);
-    void x(const QString& peerID, const QString& sdp);
+    void setRemoteCandidate(const QString& peerId, const QString& candidate, const QString& sdpMid);
+    void setRemoteDescription(const QString& peerId, const QString& sdp);
+    void x(const QString& peerId, const QString& sdp);
 
 private:
     QByteArray readVariant(const rtc::message_variant& data);

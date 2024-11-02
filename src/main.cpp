@@ -46,8 +46,8 @@ int main(int argc, char *argv[]) {
     sdp["server"] = "server";
     sdp["port"] = "1010";
 
-    // QTimer::singleShot(3000, [&] { offerer.sendSdpToClient(sdp, "client2"); });
-    offerer.offerCall();
+    QTimer::singleShot(3000, [&] { offerer.offerCall(); });
+    
     
     return app.exec();
 }

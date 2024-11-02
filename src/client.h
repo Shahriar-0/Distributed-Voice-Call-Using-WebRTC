@@ -21,8 +21,8 @@ public:
 Q_SIGNALS:
     void sdpReceived(const QJsonObject &sdp);
 
-// public Q_SLOTS:
-//     void x();
+public Q_SLOTS:
+    void x(const QString& peerId, const QString& sdp);
 
 private:
     WebRTC webrtc;

@@ -17,8 +17,12 @@ Client::Client(QObject* parent, const QString &clientId, bool isOfferer)
     connect(socket, &QTcpSocket::disconnected, this, &Client::onDisconnected);
 
     // webrtc
+    connect(&webrtc, &WebRTC::localDescriptionGenerated, this, &Client::x);
 }
 
+void Client::x(const QString& peerId, const QString& sdp) {
+    qDebug() << peerId << sdp;
+}
 void Client::offerCall() {
     webrtc.init(this->clientId, true);
     webrtc.addPeer(this->peerId);
