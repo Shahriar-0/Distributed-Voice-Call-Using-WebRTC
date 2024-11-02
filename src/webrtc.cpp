@@ -168,7 +168,7 @@ void WebRTC::sendTrack(const QString& peerId, const QByteArray& buffer) {
     rtpPacket.append(reinterpret_cast<char*>(&header), sizeof(RtpHeader));
     rtpPacket.append(buffer);
 
-    Send the packet, catch and handle any errors that occur during sending
+    // Send the packet, catch and handle any errors that occur during sending
     try {
         track->send(rtpPacket.toStdString());  // Ensuring it's sent as a std::string (binary data)
     }
