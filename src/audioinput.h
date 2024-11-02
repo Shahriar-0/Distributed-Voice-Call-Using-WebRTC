@@ -25,7 +25,7 @@ Q_SIGNALS:
 
 protected:
     qint64 writeData(const char* data, qint64 len) override;
-    qint64 readData(char* data, qint64 len) override;        // Unused but required by QIODevice
+    qint64 readData(char* data, qint64 len) override;
 
 private:
     QAudioSource* audioSource;
@@ -33,4 +33,4 @@ private:
     int opusFrameSize;
 };
 
-#endif // AUDIOINPUT_HPP
+#endif // AUDIOINPUT_H
