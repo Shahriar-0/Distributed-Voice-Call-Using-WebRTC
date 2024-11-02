@@ -31,26 +31,23 @@ int main(int argc, char *argv[]) {
 
     // if (engine.rootObjects().isEmpty()) return -1;
 
-    Client client1(nullptr, "client1");
-    Client client2(nullptr, "client2");
+    Client offerer(nullptr, "client1", true);
+    Client answerer(nullptr, "client2", false);
     SignalingServer server;
     if (!server.startServer(QHostAddress("127.0.0.1"), 9000)) {
         qDebug() << "Failed to start server!";
         return -1;
     }
 
-
-    client1.connectToServer("127.0.0.1", 9000);
-    client2.connectToServer("127.0.0.1", 9000);
+    offerer.connectToServer("127.0.0.1", 9000);
+    answerer.connectToServer("127.0.0.1", 9000);
 
     QJsonObject sdp;
     sdp["server"] = "server";
     sdp["port"] = "1010";
 
-    QTimer::singleShot(3000, [&] { client1.sendSdpToClient(sdp, "client2"); });
-    qDebug() << "Here";
-    
-
+    // QTimer::singleShot(3000, [&] { offerer.sendSdpToClient(sdp, "client2"); });
+    offerer.offerCall();
     
     return app.exec();
 }

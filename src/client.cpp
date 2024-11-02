@@ -1,30 +1,53 @@
 #include "client.h"
 
-Client::Client(QObject* parent, const QString &clientId)
-    : QObject{parent} {
-    
+Client::Client(QObject* parent, const QString &clientId, bool isOfferer)
+    : QObject{parent}, webrtc() {
+
+
+    // connect(this, &Client::sdpReceived, this, &Client::x);
+
+
     this->clientId = clientId;
+    this->peerId = clientId;// TEMP
+
+    // tcp connectio to signalingServer
     this->socket = new QTcpSocket(this);
     connect(socket, &QTcpSocket::connected, this, &Client::onConnected);
     connect(socket, &QTcpSocket::readyRead, this, &Client::onReadyRead);
     connect(socket, &QTcpSocket::disconnected, this, &Client::onDisconnected);
+
+    // webrtc
 }
+
+void Client::offerCall() {
+    webrtc.init(this->clientId, true);
+    webrtc.addPeer(this->peerId);
+    webrtc.generateOfferSDP(this->peerId);
+}
+
+// void Client::answerCall(QString &offererSDP) {
+//     webrtc.init(this->clientId, false);
+//     webrtc.addPeer(this->peerId);
+//     webrtc.generateAnswerSDP(this->peerId);
+//     webrtc.setRemoteDescription(this->peerId, offererSDP);
+// }
+
 
 void Client::connectToServer(const QString &serverIp, int serverPort) {
     socket->connectToHost(QHostAddress(serverIp), serverPort);
 }
 
 void Client::sendSdpToClient(const QJsonObject &sdp, const QString &targetId) {
-    // if (socket->state() == QAbstractSocket::ConnectedState) {
-    QJsonObject message;
-    message["sdp"] = sdp;
-    message["targetId"] = targetId;
+    if (socket->state() == QAbstractSocket::ConnectedState) {
+        QJsonObject message;
+        message["sdp"] = sdp;
+        message["targetId"] = targetId;
 
-    QJsonDocument doc(message);
-    socket->write(doc.toJson());
-    // } else {
-    //     qDebug() << "Not connected to server.";
-    // }
+        QJsonDocument doc(message);
+        socket->write(doc.toJson());
+    } else {
+        qDebug() << "Not connected to server.";
+    }
 }
 
 void Client::onConnected() {
@@ -44,7 +67,6 @@ void Client::onReadyRead() {
     QJsonObject obj = doc.object();
 
     QJsonObject receivedSdp = obj["sdp"].toObject();
-    qDebug() << this->clientId << " : " << receivedSdp << '\n';
 
     if (!receivedSdp.isEmpty()) {
         emit sdpReceived(receivedSdp); 

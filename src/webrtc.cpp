@@ -17,17 +17,19 @@ struct RtpHeader {
 };
 #pragma pack(pop)
 
-WebRTC::WebRTC(QObject* parent) : QObject{parent}, m_audio("Audio") {
-    connect(this, &WebRTC::gatheringComplited, [this](const QString& peerID) {
-        m_localDescription =
-            descriptionToJson(m_peerConnections[peerID]->localDescription().value());
-        Q_EMIT localDescriptionGenerated(peerID, m_localDescription);
+WebRTC::WebRTC(QObject* parent) : QObject{parent} {
+    // connect(this, &WebRTC::gatheringComplited, [this](const QString& peerID) {
+    //     m_localDescription =
+    //         descriptionToJson(m_peerConnections[peerID]->localDescription().value());
+    //     Q_EMIT localDescriptionGenerated(peerID, m_localDescription);
 
-        if (m_isOfferer)
-            Q_EMIT this->offerIsReady(peerID, m_localDescription);
-        else
-            Q_EMIT this->answerIsReady(peerID, m_localDescription);
-    });
+    //     if (m_isOfferer)
+    //         Q_EMIT this->offerIsReady(peerID, m_localDescription);
+    //     else
+    //         Q_EMIT this->answerIsReady(peerID, m_localDescription);
+    // });
+
+    // connect(this, &WebRTC::offerIsReady, this, &WebRTC::x);
 }
 
 WebRTC::~WebRTC() {}
@@ -91,26 +93,26 @@ void WebRTC::addPeer(const QString& peerId) {
         Q_EMIT localCandidateGenerated(peerId, QString::fromStdString(candidate.candidate()), QString());
     });
 
-    // // Set up a callback for when the state of the peer connection changes
+    // Set up a callback for when the state of the peer connection changes
     newPeer->onStateChange([this, peerId](rtc::PeerConnection::State state) {
-        if (state == rtc::PeerConnection::State::Connected) {
-            Q_EMIT gatheringComplited(peerId);
-        } else if (state == rtc::PeerConnection::State::Disconnected) {
-            // FIXME
-            qDebug() << "Peer disconnected:" << peerId;
-        }
+        std::cout << state << std::endl;
+        // if (state == rtc::PeerConnection::State::Connected) {
+        //     Q_EMIT gatheringComplited(peerId);
+        // } else if (state == rtc::PeerConnection::State::Disconnected) {
+        //     // FIXME 
+        //     qDebug() << "Peer disconnected:" << peerId;
+        // }
     });
 
-    // // Set up a callback for monitoring the gathering state
+    // Set up a callback for monitoring the gathering state
     newPeer->onGatheringStateChange([this, peerId](rtc::PeerConnection::GatheringState state) {
         if (state == rtc::PeerConnection::GatheringState::Complete) {
             Q_EMIT gatheringComplited(peerId);
         }
     });
 
-    // // Set up a callback for handling incoming tracks
-
-    qDebug() << "Received audio track from peer:" << peerId;
+    // Set up a callback for handling incoming tracks
+    // qDebug() << "Received audio track from peer:" << peerId;
 
     newPeer->onTrack([this, peerId](std::shared_ptr<rtc::Track> track) {
         track->onMessage([this, peerId](rtc::message_variant data) {
@@ -125,7 +127,12 @@ void WebRTC::addPeer(const QString& peerId) {
 
 // Set the local description for the peer's connection
 void WebRTC::generateOfferSDP(const QString& peerId) {
-    auto peer = m_peerConnections[peerId];
+     if (!m_peerConnections.contains(peerId)) {
+        qDebug() << "Peer ID not found:" << peerId;
+        return;
+    }
+
+    auto peer = m_peerConnections[peerId];    
     peer->setLocalDescription(rtc::Description::Type::Offer);
 }
 
@@ -139,19 +146,16 @@ void WebRTC::generateAnswerSDP(const QString& peerId) {
 void WebRTC::addAudioTrack(const QString& peerId, const QString& trackName) {
     auto peer = m_peerConnections[peerId];
     this->m_audio = rtc::Description::Audio(trackName.toStdString(), rtc::Description::Direction::SendRecv);
-    auto audioTrack = peer->addTrack(m_audio);
-
-    // Add an audio track to the peer connection
+    auto audioTrack = peer->addTrack(this->m_audio);
 
     audioTrack->onMessage([this, peerId](rtc::message_variant data) {
         QByteArray buffer = readVariant(data);
         Q_EMIT incommingPacket(peerId, buffer, buffer.size());
     });
 
-
-    // audioTrack->onFrame([this] (rtc::binary frame, rtc::FrameInfo info) {
-    //     // TODO: ?
-    // });
+    audioTrack->onFrame([this] (rtc::binary frame, rtc::FrameInfo info) {
+        // TODO: ?
+    });
 }
 
 // Sends audio track data to the peer
@@ -201,7 +205,9 @@ void WebRTC::setRemoteCandidate(const QString& peerID, const QString& candidate,
     peer->addRemoteCandidate(rtc::Candidate(candidate.toStdString(), sdpMid.toStdString()));
 }
 
-
+void WebRTC::x(const QString& peerID, const QString& sdp) {
+    qDebug() << "Description ready";
+}
 /*
  * ====================================================
  * ================= private methods ==================

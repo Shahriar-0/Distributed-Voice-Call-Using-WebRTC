@@ -34,11 +34,8 @@ void SignalingServer::onReadyRead() {
     QJsonObject sdp = obj["sdp"].toObject();
     QString targetId = obj["targetId"].toString();
 
-    qDebug() << (obj);
-
     if (!clientId.isEmpty()) {
         clients[clientSocket] = clientId;
-        qDebug() << clientId;
         return;
     }
     else {
