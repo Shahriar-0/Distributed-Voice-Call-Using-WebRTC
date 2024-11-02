@@ -66,7 +66,6 @@ Q_SIGNALS:
 public Q_SLOTS:
     void setRemoteCandidate(const QString& peerId, const QString& candidate, const QString& sdpMid);
     void setRemoteDescription(const QString& peerId, const QString& sdp);
-    void x(const QString& peerId, const QString& sdp);
 
 private:
     QByteArray readVariant(const rtc::message_variant& data);

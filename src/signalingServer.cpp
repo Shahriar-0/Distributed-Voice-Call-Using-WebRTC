@@ -30,6 +30,7 @@ void SignalingServer::onReadyRead() {
 
     QString clientId = obj["clientId"].toString();
     QString sourceId = obj["sourceId"].toString();
+    QString clientType = obj["clientType"].toString();
     QString sdp = obj["sdp"].toString();
     QString targetId = obj["targetId"].toString();
 
@@ -41,12 +42,12 @@ void SignalingServer::onReadyRead() {
     }
     else {
         if (clients.contains(targetId)) {
-            qDebug() << targetId;
             QTcpSocket *targetSocket = clients[targetId];
             if (targetSocket) {
                 QJsonObject response;
-                response["sdp"] = sdp;
                 response["sourceId"] = sourceId;
+                response["clientType"] = clientType;
+                response["sdp"] = sdp;
                 targetSocket->write(QJsonDocument(response).toJson());
             }
         }
