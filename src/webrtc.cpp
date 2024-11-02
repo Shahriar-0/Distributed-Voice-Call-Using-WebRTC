@@ -73,13 +73,9 @@ void WebRTC::init(const QString& id, bool isOfferer) {
 }
 
 void WebRTC::addPeer(const QString& peerId) {
+    // Create and add a new peer connection
     auto newPeer = std::make_shared<rtc::PeerConnection>(this->m_config);
     this->m_peerConnections[peerId] = newPeer;
-
-
-
-    addAudioTrack(peerId, "audio");
-    // Create and add a new peer connection
 
     // Set up a callback for when the local description is generated
     newPeer->onLocalDescription([this, peerId](const rtc::Description& description) {
@@ -124,7 +120,6 @@ void WebRTC::addPeer(const QString& peerId) {
     });
 
     // Add an audio track to the peer connection
-    // newPeer->addTrack(m_audio);
     addAudioTrack(peerId, "Audio");
 }
 
@@ -160,7 +155,6 @@ void WebRTC::addAudioTrack(const QString& peerId, const QString& trackName) {
 }
 
 // Sends audio track data to the peer
-
 void WebRTC::sendTrack(const QString& peerId, const QByteArray& buffer) {
 
     auto track = this->m_peerTracks[peerId];
