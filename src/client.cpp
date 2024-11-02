@@ -14,7 +14,7 @@ void Client::connectToServer(const QString &serverIp, int serverPort) {
     socket->connectToHost(QHostAddress(serverIp), serverPort);
 }
 
-void Client::sendSdpToClient(const QString &sdp, const QString &targetId) {
+void Client::sendSdpToClient(const QJsonObject &sdp, const QString &targetId) {
     // if (socket->state() == QAbstractSocket::ConnectedState) {
     QJsonObject message;
     message["sdp"] = sdp;
@@ -43,7 +43,7 @@ void Client::onReadyRead() {
     QJsonDocument doc = QJsonDocument::fromJson(data);
     QJsonObject obj = doc.object();
 
-    QString receivedSdp = obj["sdp"].toString();
+    QJsonObject receivedSdp = obj["sdp"].toObject();
     qDebug() << this->clientId << " : " << receivedSdp << '\n';
 
     if (!receivedSdp.isEmpty()) {

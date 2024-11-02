@@ -13,7 +13,7 @@ class Client : public QObject {
 public:
     explicit Client(QObject* parent = nullptr, const QString &clientId = "");
     void connectToServer(const QString &serverIp, int serverPort);
-    void sendSdpToClient(const QString &sdp, const QString &targetId);
+    void sendSdpToClient(const QJsonObject &sdp, const QString &targetId);
 private:
     WebRTC webrtc;
     QString peerId;
@@ -27,7 +27,7 @@ private:
     void onDisconnected();
 
 signals:
-    void sdpReceived(const QString &sdp);
+    void sdpReceived(const QJsonObject &sdp);
     // void connectedToServer();
 };
 

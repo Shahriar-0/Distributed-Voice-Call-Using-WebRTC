@@ -40,20 +40,14 @@ int main(int argc, char *argv[]) {
     }
 
 
-    // client1.sendSdpToClient("sdddddp", "client2");
     client1.connectToServer("127.0.0.1", 9000);
     client2.connectToServer("127.0.0.1", 9000);
 
+    QJsonObject sdp;
+    sdp["server"] = "server";
+    sdp["port"] = "1010";
 
-
-    // while(1) {
-    //     if((client1.socket->state() == QAbstractSocket::ConnectedState)
-    //         && (client2.socket->state() == QAbstractSocket::ConnectedState))
-
-    //         break;   
-    // }
-
-    QTimer::singleShot(3000, [&] { client1.sendSdpToClient("sdddp", "client2"); });
+    QTimer::singleShot(3000, [&] { client1.sendSdpToClient(sdp, "client2"); });
     qDebug() << "Here";
     
 
