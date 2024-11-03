@@ -133,7 +133,7 @@ void WebRTC::generateOfferSDP(const QString& peerId) {
 // Generate an answer SDP for the peer
 void WebRTC::generateAnswerSDP(const QString& peerId) {
     auto peer = m_peerConnections[peerId];
-    peer->setLocalDescription(rtc::Description::Type::Answer);
+    peer->localDescription()->generateSdp();
 }
 
 // Add an audio track to the peer connection
@@ -191,9 +191,9 @@ void WebRTC::sendTrack(const QString& peerId, const QByteArray& buffer) {
 
 // Set the remote SDP description for the peer that contains metadata about the media being
 // transmitted
-void WebRTC::setRemoteDescription(const QString& peerId, const QString& sdp) {
+void WebRTC::setRemoteDescription(const QString& peerId, const QString& sdp , rtc::Description::Type remoteType) {
     auto peer = m_peerConnections[peerId];
-    peer->setRemoteDescription(rtc::Description(sdp.toStdString(), rtc::Description::Type::Offer));
+    peer->setRemoteDescription(rtc::Description(sdp.toStdString(), remoteType));
 }
 
 // Add remote ICE candidates to the peer connection

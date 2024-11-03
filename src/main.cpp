@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 
     // if (engine.rootObjects().isEmpty()) return -1;
 
-    Client* offerer = new Client(nullptr, "client1", true);
+    Client offerer(nullptr, "client1", true);
     Client answerer(nullptr, "client2", false);
     SignalingServer server;
     if (!server.startServer(QHostAddress("127.0.0.1"), 9000)) {
@@ -39,15 +39,14 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    offerer->connectToServer("127.0.0.1", 9000);
+    offerer.connectToServer("127.0.0.1", 9000);
     answerer.connectToServer("127.0.0.1", 9000);
 
     QJsonObject sdp;
     sdp["server"] = "server";
     sdp["port"] = "1010";
 
-    QTimer::singleShot(2000, [&] { offerer->offerCall("client2"); });
-    QTimer::singleShot(5000, [&] { delete offerer; });
+    QTimer::singleShot(2000, [&] { offerer.offerCall("client2"); });
     
     
     return app.exec();

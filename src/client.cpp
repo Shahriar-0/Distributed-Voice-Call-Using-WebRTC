@@ -38,21 +38,18 @@ void Client::answererIsReady(const QString& peerId, const QString& sdp) {
 
 void Client::offerCall(QString answererId) {
     this->otherClientId = answererId;
-
     webrtc.generateOfferSDP(this->peerId);
 }
 
 void Client::answerCall(QString offererId, QString offererSdp) {
     this->otherClientId = offererId;
     
-    // qDebug() << offererSdp;
-    // qDebug().noquote() << QJsonDocument::fromJson(offererSdp.toUtf8()).toJson(QJsonDocument::Indented);
-    webrtc.setRemoteDescription(this->peerId, offererSdp);
-    // webrtc.generateAnswerSDP(this->peerId);
+    webrtc.setRemoteDescription(this->peerId, offererSdp, rtc::Description::Type::Offer);
+    webrtc.generateAnswerSDP(this->peerId);
 }
 
 void Client::confirmCall(QString answererSdp) {
-    webrtc.setRemoteDescription(this->peerId, answererSdp);
+    webrtc.setRemoteDescription(this->peerId, answererSdp, rtc::Description::Type::Answer);
 }
 
 
