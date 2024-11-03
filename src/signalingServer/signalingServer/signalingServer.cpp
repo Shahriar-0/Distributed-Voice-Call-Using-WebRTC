@@ -1,27 +1,27 @@
 #include "signalingserver.h"
 
-SignalingServer::SignalingServer(QObject *parent)
+SignalingServer::SignalingServer(QObject* parent)
     : QTcpServer(parent) {
     connect(this, &QTcpServer::newConnection, this, &SignalingServer::onNewConnection);
 }
 
-bool SignalingServer::startServer(const QHostAddress &address, quint16 port) {
+bool SignalingServer::startServer(const QHostAddress& address, quint16 port) {
     return listen(address, port);
 }
 
 void SignalingServer::incomingConnection(qintptr socketDescriptor) {
-    QTcpSocket *clientSocket = new QTcpSocket(this);
+    QTcpSocket* clientSocket = new QTcpSocket(this);
     clientSocket->setSocketDescriptor(socketDescriptor);
     connect(clientSocket, &QTcpSocket::readyRead, this, &SignalingServer::onReadyRead);
     connect(clientSocket, &QTcpSocket::disconnected, this, &SignalingServer::onDisconnected);
 }
 
 void SignalingServer::onNewConnection() {
-    QTcpSocket *clientSocket = nextPendingConnection();
+    QTcpSocket* clientSocket = nextPendingConnection();
 }
 
 void SignalingServer::onReadyRead() {
-    QTcpSocket *clientSocket = qobject_cast<QTcpSocket *>(sender());
+    QTcpSocket* clientSocket = qobject_cast<QTcpSocket*>(sender());
     if (!clientSocket) return;
 
     QByteArray data = clientSocket->readAll();
@@ -37,12 +37,11 @@ void SignalingServer::onReadyRead() {
     if (!clientId.isEmpty()) {
         clients[clientId] = clientSocket;
         qDebug() << "Server: New Connection from" << clientId;
-
         return;
     }
     else {
         if (clients.contains(targetId)) {
-            QTcpSocket *targetSocket = clients[targetId];
+            QTcpSocket* targetSocket = clients[targetId];
             if (targetSocket) {
                 QJsonObject response;
                 response["sourceId"] = sourceId;
@@ -52,7 +51,6 @@ void SignalingServer::onReadyRead() {
             }
         }
     }
-
 }
 
 void SignalingServer::onDisconnected() {
