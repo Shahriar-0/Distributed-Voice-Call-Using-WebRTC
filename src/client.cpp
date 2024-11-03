@@ -19,8 +19,32 @@ Client::Client(QObject* parent, const QString &clientId, bool isOfferer)
     webrtc.addPeer(this->peerId);
     connect(&webrtc, &WebRTC::offerIsReady, this, &Client::offererIsReady);
     connect(&webrtc, &WebRTC::answerIsReady, this, &Client::answererIsReady);
-    connect(&webrtc, &WebRTC::incommingPacket, &audiooutput, &AudioOutput::newPacket);
-    connect(&audioinput, &AudioInput::newAudioData, &webrtc, &Webrtc::sendTrack);
+    connect(&webrtc, &WebRTC::incommingPacket, this, &Client::packetRecieved);
+    connect(&audioinput, &AudioInput::newAudioData, this, &Client::packetReady);
+
+    connect(&webrtc, &WebRTC::p2pConnected, this, &Client::startCall);
+    connect(&webrtc, &WebRTC::p2pDisconnected, this, &Client::endCall);
+}
+
+void Client::startCall() {
+    if (!audioinput.startAudio()) {
+        qWarning() << "Failed to start audio input.";
+    }
+}
+
+void Client::endCall() {
+    if (!audioinput.stopAudio()) {
+        qWarning() << "Failed to stop audio input.";
+    }
+}
+
+void Client::packetRecieved(const QString& peerId, const QByteArray& data, qint64 len) {
+    qDebug() << "packet received";
+    audiooutput.addData(data);
+}
+void Client::packetReady(const QByteArray& buffer) {
+    qDebug() << "packet ready";
+    webrtc.sendTrack(this->peerId, buffer);
 }
 
 void Client::offererIsReady(const QString& peerId, const QString& sdp) {

@@ -27,6 +27,10 @@ Q_SIGNALS:
 public Q_SLOTS:
     void offererIsReady(const QString& peerId, const QString& sdp);
     void answererIsReady(const QString& peerId, const QString& sdp);
+    void packetRecieved(const QString& peerId, const QByteArray& data, qint64 len);
+    void packetReady(const QByteArray& buffer);
+    void startCall();
+    void endCall();
 
 private:
     WebRTC webrtc;

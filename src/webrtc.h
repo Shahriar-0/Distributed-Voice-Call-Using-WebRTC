@@ -63,6 +63,9 @@ Q_SIGNALS:
 
     void bitRateChanged();
 
+    void p2pConnected();
+    void p2pDisconnected();
+
 public Q_SLOTS:
     void setRemoteCandidate(const QString& peerId, const QString& candidate, const QString& sdpMid);
     void setRemoteDescription(const QString& peerId, const QString& sdp, rtc::Description::Type remoteType);
