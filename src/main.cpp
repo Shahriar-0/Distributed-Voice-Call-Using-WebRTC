@@ -4,7 +4,6 @@
 #include <QTimer>
 
 #include "client.h"
-#include "signalingserver.h"
 
 int main(int argc, char *argv[]) {
     QCoreApplication  app(argc, argv);
@@ -31,12 +30,6 @@ int main(int argc, char *argv[]) {
 
     Client offerer(nullptr, "client1", true);
     Client answerer(nullptr, "client2", false);
-
-    // SignalingServer server;
-    // if (!server.startServer(QHostAddress("127.0.0.1"), 9000)) {
-    //     qDebug() << "Failed to start server!";
-    //     return -1;
-    // }
 
     offerer.connectToServer("127.0.0.1", 9000);
     answerer.connectToServer("127.0.0.1", 9000);
