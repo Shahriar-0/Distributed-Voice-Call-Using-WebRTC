@@ -22,6 +22,7 @@ public:
     void addData(const QByteArray& data);
 
 Q_SIGNALS:
+  // (const QString& peerId, const QByteArray& data, qint64 len);
     void newPacket();
 
 private Q_SLOTS:

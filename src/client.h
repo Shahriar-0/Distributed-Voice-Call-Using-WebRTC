@@ -7,6 +7,8 @@
 #include <QJsonDocument>
 
 #include "webrtc.h"
+#include "audioinput.h"
+#include "audiooutput.h"
 
 class Client : public QObject {
     Q_OBJECT
@@ -33,6 +35,8 @@ private:
     QString otherClientId;
     QTcpSocket *socket;
 
+    AudioInput audioinput;
+    AudioOutput audiooutput;
 
     void onConnected();
     void onReadyRead();

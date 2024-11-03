@@ -1,7 +1,7 @@
 #include "client.h"
 
 Client::Client(QObject* parent, const QString &clientId, bool isOfferer)
-    : QObject{parent}, webrtc() {
+    : QObject{parent}, webrtc(), audioinput(), audiooutput() {
 
 
 
@@ -19,11 +19,8 @@ Client::Client(QObject* parent, const QString &clientId, bool isOfferer)
     webrtc.addPeer(this->peerId);
     connect(&webrtc, &WebRTC::offerIsReady, this, &Client::offererIsReady);
     connect(&webrtc, &WebRTC::answerIsReady, this, &Client::answererIsReady);
-    // connect(&webrtc, &WebRTC::incommingPacket, this, &//func to play);
-    // functoplay(const QString& peerId, const QByteArray& data, qint64 len);
-
-    // connect(this, &Client:://func to read, &webrtc, &WebRTC::sendTrack);
-    // 
+    connect(&webrtc, &WebRTC::incommingPacket, &audiooutput, &AudioOutput::newPacket);
+    connect(&audioinput, &AudioInput::newAudioData, &webrtc, &Webrtc::sendTrack);
 }
 
 void Client::offererIsReady(const QString& peerId, const QString& sdp) {
@@ -98,7 +95,7 @@ void Client::onReadyRead() {
     } else if(clientType == "answerer") {
         confirmCall(sdp);
     } else {
-        qDebug() << "WTF";
+        qDebug() << "Invalid client type";
     }
 
     if (!receivedSdp.isEmpty()) {
