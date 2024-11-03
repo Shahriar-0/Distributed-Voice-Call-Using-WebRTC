@@ -3,13 +3,11 @@
 #include <QQmlApplicationEngine>
 #include <QTimer>
 
-#include "distributedlivevoicecall.h"
 #include "client.h"
 #include "signalingserver.h"
-#include <windows.h>
 
 int main(int argc, char *argv[]) {
-    QCoreApplication app(argc, argv);
+    QCoreApplication  app(argc, argv);
 
     // app.setWindowIcon(QIcon(":/assets/icon.png"));
     
@@ -33,18 +31,15 @@ int main(int argc, char *argv[]) {
 
     Client offerer(nullptr, "client1", true);
     Client answerer(nullptr, "client2", false);
-    SignalingServer server;
-    if (!server.startServer(QHostAddress("127.0.0.1"), 9000)) {
-        qDebug() << "Failed to start server!";
-        return -1;
-    }
+
+    // SignalingServer server;
+    // if (!server.startServer(QHostAddress("127.0.0.1"), 9000)) {
+    //     qDebug() << "Failed to start server!";
+    //     return -1;
+    // }
 
     offerer.connectToServer("127.0.0.1", 9000);
     answerer.connectToServer("127.0.0.1", 9000);
-
-    QJsonObject sdp;
-    sdp["server"] = "server";
-    sdp["port"] = "1010";
 
     QTimer::singleShot(2000, [&] { offerer.offerCall("client2"); });
     
