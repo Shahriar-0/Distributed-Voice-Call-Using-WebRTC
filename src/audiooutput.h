@@ -22,21 +22,20 @@ public:
     void addData(const QByteArray& data);
 
 Q_SIGNALS:
-  // (const QString& peerId, const QByteArray& data, qint64 len);
     void newPacket();
 
 private Q_SLOTS:
     void play();
 
 private:
-    QAudioFormat audioFormat;
-    QAudioSink* audioSink;
-    QIODevice* audioDevice;
-    QQueue<QByteArray> audioQueue;
-    QMutex mutex;
+    QAudioFormat audioFormat; // Audio format settings
+    QAudioSink* audioSink;    // Audio sink (output)
+    QIODevice* audioDevice;   // Audio device for playback
+    OpusDecoder* opusDecoder; // Opus decoder instance
+    int opusFrameSize;        // Frame size for decoding
 
-    OpusDecoder* opusDecoder;
-    int opusFrameSize;
+    QQueue<QByteArray> audioQueue; // Queue to hold encoded audio data
+    QMutex mutex;                  // Mutex for thread safety when accessing the queue
 };
 
 #endif // AUDIOOUTPUT_H
