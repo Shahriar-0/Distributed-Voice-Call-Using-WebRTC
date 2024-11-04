@@ -7,8 +7,8 @@
 #include <QJsonDocument>
 
 #include "webrtc.h"
-#include "audioinput.h"
-#include "audiooutput.h"
+#include "../audio/audioinput.h"
+#include "../audio/audiooutput.h"
 
 class Client : public QObject {
     Q_OBJECT

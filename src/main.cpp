@@ -3,7 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QTimer>
 
-#include "client.h"
+#include "web/client.h"
 
 int main(int argc, char *argv[]) {
     QGuiApplication  app(argc, argv);
