@@ -18,7 +18,7 @@ CHALLENGE: there was a bug we faced in the sending messages. We should wait unti
 
 - webrtc implemented just right it was asked to.
 - There was some functions and variables which were not needed, `m_peerConnections` for example.
-- The flow of program is: the client who wants to make a call, call the `offerCall` function, then an offerer sdp will be created, and will be passed to the signaling server. the signaling server send the sdp to the given ID(which is connected to the signaling server and we stored the socket of it in `clients` in signalingServer). after that the second client receive the sdp and call the `answerCall` function, we generate an answerer sdp for local client(second one) and we set the first client's sdp as its remote. after that we send back the sdp of second client and we set as the first client's remote sdp in the `confirmCall` function. finally two clients now has a p2p connection to each other.
+- The flow of program is: the client who wants to make a call, call the `offerCall` function, then an offerer sdp will be created, and will be passed to the signaling server. the signaling server send the sdp to the given ID(which is connected to the signaling server and we stored the socket of it in `clients` in `signalingServer`). after that the second client receive the sdp and call the `answerCall` function, we generate an answerer sdp for local client(second one) and we set the first client's sdp as its remote. after that we send back the sdp of second client and we set as the first client's remote sdp in the `confirmCall` function. finally two clients now has a p2p connection to each other.
 
 
 **3. Client:**
