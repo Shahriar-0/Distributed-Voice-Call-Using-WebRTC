@@ -301,3 +301,10 @@ void WebRTC::setIsOfferer(bool newIsOfferer) {
 void WebRTC::resetIsOfferer() {
     setIsOfferer(false);
 }
+
+void WebRTC::closeConnection(const QString& peerId) {
+    m_peerConnections[peerId]->close();
+    m_peerTracks[peerId]->close();
+    m_peerConnections.remove(peerId);
+    m_gatheringComplited = false;
+}

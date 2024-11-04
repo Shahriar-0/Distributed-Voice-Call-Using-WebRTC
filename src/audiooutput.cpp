@@ -37,18 +37,15 @@ void AudioOutput::play() {
         return;
 
     QByteArray encodedData = audioQueue.dequeue();
-
-    opus_int16 decodedData[960 * 2]; // 480 samples per frame, 2 bytes per sample
-
-    int decodedSamples = opus_decode(opusDecoder, reinterpret_cast<const unsigned char*>(encodedData.constData()),
-                                     encodedData.size(), decodedData, opusFrameSize, 0);
+    opus_int16 pcmData[960];
+    int decodedSamples = opus_decode(opusDecoder, reinterpret_cast<const unsigned char *>(encodedData.data()),
+                                        encodedData.size(), pcmData, 960, 0);
 
     if (decodedSamples < 0) {
-        qWarning() << "Opus decoding failed:" << opus_strerror(decodedSamples);
+        qDebug() << "Opus decoding error:" << opus_strerror(decodedSamples);
     }
-    if (encodedData.size() < 100)
-        return;
-    audioDevice->write(reinterpret_cast<const char*>(decodedData), decodedSamples * sizeof(opus_int16));
-    // for raw audio
-    // audioDevice->write(encodedData);
+
+    if (audioDevice) {
+        audioDevice->write(reinterpret_cast<const char *>(pcmData), decodedSamples * sizeof(opus_int16));
+    }
 }

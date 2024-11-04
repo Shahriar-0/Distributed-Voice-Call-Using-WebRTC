@@ -13,24 +13,27 @@
 class Client : public QObject {
     Q_OBJECT
 public:
-    explicit Client(QObject* parent = nullptr, const QString &clientId = "", bool is_offerer = false);
+    explicit Client(QObject* parent = nullptr, const QString &clientId = "");
     void connectToServer(const QString &serverIp, int serverPort);
     void sendSdpToServer(const QString &sdp, const QString &targetId, const QString &clientType);
 
-    void offerCall(QString otherClinetId);
+    Q_INVOKABLE void offerCall(QString otherClinetId);
     void answerCall(QString offererId, QString offererSdp);
     void confirmCall(QString answererSdp);
+    Q_INVOKABLE void endCall();
 
 Q_SIGNALS:
     void sdpReceived(const QString &sdp);
+    void callReceived();
+    void callEnded();
 
 public Q_SLOTS:
     void offererIsReady(const QString& peerId, const QString& sdp);
     void answererIsReady(const QString& peerId, const QString& sdp);
     void packetRecieved(const QString& peerId, const QByteArray& data, qint64 len);
     void packetReady(const QByteArray& buffer);
-    void startCall();
-    void endCall();
+    void startAudio();
+    void endAudio();
 
 private:
     WebRTC webrtc;

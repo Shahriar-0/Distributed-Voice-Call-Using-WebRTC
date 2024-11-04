@@ -37,6 +37,8 @@ public:
     void setBitRate(int newBitRate);
     void resetBitRate();
 
+    void closeConnection(const QString& peerId);
+
 Q_SIGNALS:
     void openedDataChannel(const QString& peerId);
 

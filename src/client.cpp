@@ -1,9 +1,7 @@
 #include "client.h"
 
-Client::Client(QObject* parent, const QString &clientId, bool isOfferer)
+Client::Client(QObject* parent, const QString &clientId)
     : QObject{parent}, webrtc(), audioinput(), audiooutput() {
-
-
 
     this->clientId = clientId;
     this->peerId = clientId;// TEMP
@@ -15,27 +13,30 @@ Client::Client(QObject* parent, const QString &clientId, bool isOfferer)
     connect(socket, &QTcpSocket::disconnected, this, &Client::onDisconnected);
 
     // webrtc
-    webrtc.init(this->clientId, isOfferer);
-    webrtc.addPeer(this->peerId);
     connect(&webrtc, &WebRTC::offerIsReady, this, &Client::offererIsReady);
     connect(&webrtc, &WebRTC::answerIsReady, this, &Client::answererIsReady);
     connect(&webrtc, &WebRTC::incommingPacket, this, &Client::packetRecieved);
     connect(&audioinput, &AudioInput::newAudioData, this, &Client::packetReady);
 
-    connect(&webrtc, &WebRTC::p2pConnected, this, &Client::startCall);
-    connect(&webrtc, &WebRTC::p2pDisconnected, this, &Client::endCall);
+    connect(&webrtc, &WebRTC::p2pConnected, this, &Client::startAudio);
+    connect(&webrtc, &WebRTC::p2pDisconnected, this, &Client::endAudio);
 }
 
-void Client::startCall() {
+void Client::endCall() {
+    webrtc.closeConnection(this->peerId);
+}
+
+void Client::startAudio() {
     if (!audioinput.startAudio()) {
         qWarning() << "Failed to start audio input.";
     }
 }
 
-void Client::endCall() {
+void Client::endAudio() {
     if (!audioinput.stopAudio()) {
         qWarning() << "Failed to stop audio input.";
     }
+    emit callEnded();
 }
 
 void Client::packetRecieved(const QString& peerId, const QByteArray& data, qint64 len) {
@@ -58,15 +59,22 @@ void Client::answererIsReady(const QString& peerId, const QString& sdp) {
 }
 
 void Client::offerCall(QString answererId) {
+    webrtc.init(this->clientId, true);
+    webrtc.addPeer(this->peerId);
+
     this->otherClientId = answererId;
     webrtc.generateOfferSDP(this->peerId);
 }
 
 void Client::answerCall(QString offererId, QString offererSdp) {
+    webrtc.init(this->clientId, false);
+    webrtc.addPeer(this->peerId);
+
     this->otherClientId = offererId;
     
     webrtc.setRemoteDescription(this->peerId, offererSdp, rtc::Description::Type::Offer);
     webrtc.generateAnswerSDP(this->peerId);
+    emit callReceived();
 }
 
 void Client::confirmCall(QString answererSdp) {
