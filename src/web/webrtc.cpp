@@ -134,7 +134,6 @@ void WebRTC::addAudioTrack(const QString& peerId, const QString& trackName) {
 void WebRTC::sendTrack(const QString& peerId, const QByteArray& buffer) {
     auto track = this->m_peerTracks[peerId];
 
-    // Create the RTP header and initialize an RtpHeader struct
     RtpHeader header;
     header.first = 0x80;
     header.marker = 0;
@@ -143,7 +142,6 @@ void WebRTC::sendTrack(const QString& peerId, const QByteArray& buffer) {
     header.timestamp = qToBigEndian(getCurrentTimestamp());
     header.ssrc = qToBigEndian(this->m_ssrc);
 
-    // Create the RTP packet by appending the RTP header and the payload buffer
     QByteArray rtpPacket;
     rtpPacket.append(reinterpret_cast<char*>(&header), sizeof(RtpHeader));
     rtpPacket.append(buffer);
