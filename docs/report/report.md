@@ -26,7 +26,7 @@ CHALLENGE: there was a bug we faced in the sending messages. We should wait unti
 - we create an instance of client in the `main.cpp` and connect to the server.
 - the ip and port of the socket which clients try to connect must be same as the server ip and server port, please pay attention that they are hardcoded to `localhost` and `9000`.
 - The signals and slots of client are so important, we explain them:
-    - three slot, `onConnected`, `onReadyRead` and `onDisconnected` are for socket connection.
+    - three slots, `onConnected`, `onReadyRead` and `onDisconnected` are for socket connection.
     - `offerIsReady` and `answerIsReady` from webrtc connect to the same-named slots, which client send its sdp to the other client right after it.
     - `incommingPacket` from `webrtc` is connected to `packetRecieved`, which pass the packet to audio classes to play it.
     - `newAudioData` from `audioinput` is connected to `packetReady` which pass it to the webrtc to send the voice packet to other client.
