@@ -1,13 +1,13 @@
 import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
-import voiceCall 1.0 as VoiceCall
+import Client 1.0 as Client
 
 Window {
     width: 280
     height: 520
     visible: true
-    title: qsTr("seyedHasanNasrollah")
+    title: qsTr("voice app")
 
     Item {
         anchors.fill: parent
@@ -22,19 +22,13 @@ Window {
             }
 
             Label {
-                text: "IP: " + "172.16.142.176"
+                text: "your Id: " + "client1"
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
             }
 
             Label {
-                text: "IceCandidate: " + "172.16.142.176"
-                Layout.fillWidth: true
-                Layout.preferredHeight: 40
-            }
-
-            Label {
-                text: "CallerID: " + textfield.text
+                text: "other Id: " + textfield.text
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
             }
@@ -42,7 +36,7 @@ Window {
 
         TextField {
             id: textfield
-            placeholderText: "Phone Number"
+            placeholderText: "Enter the Id"
             anchors.bottom: callbtn.top
             anchors.bottomMargin: 10
             anchors.left: callbtn.left
@@ -68,12 +62,12 @@ Window {
             onClicked: {
                 pushed = !pushed
                 if (pushed) {
-                    VoiceCall.DistributedLiveVoiceCall.startCall(textfield.text)
+                    Client.Client.offerCall(textfield.text)
                     Material.background = "red"
                     text = "End Call"
                 }
                 else {
-                    VoiceCall.DistributedLiveVoiceCall.endCall()
+                    Client.Client.endCall()
                     Material.background = "green"
                     text = "Call"
                     textfield.clear()
@@ -81,4 +75,24 @@ Window {
             }
         }
     }
+
+    Connections {
+            target: Client.Client
+
+            onCallReceived: {
+                callbtn.pushed = true
+                callbtn.Material.background = "red"
+                callbtn.text = "End Call"
+            }
+        }
+    Connections {
+            target: Client.Client
+
+            onCallEnded: {
+                callbtn.pushed = false
+                callbtn.Material.background = "green"
+                callbtn.text = "Call"
+                callbtn.textfield.clear()
+            }
+        }
 }
